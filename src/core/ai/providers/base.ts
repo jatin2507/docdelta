@@ -6,6 +6,7 @@ export enum AIProvider {
   OLLAMA = 'ollama',
   LITELLM = 'litellm',
   GROK = 'grok',
+  VSCODE_EXTENSION = 'vscode-extension',
 }
 
 export interface AIProviderConfig {

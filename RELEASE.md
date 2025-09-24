@@ -1,6 +1,155 @@
 # ScribeVerse Releases
 
-## 🚀 Version 1.2.7 - Latest Release
+## 🚀 Version 1.1.8 - Latest Release
+
+**Release Date:** September 24, 2025
+**Status:** Stable - Major Feature Update
+
+### 🎉 What's New in v1.1.8
+
+#### 🔌 **VS Code Language Model API Integration**
+- **BREAKTHROUGH**: Direct integration with VS Code's Language Model API for seamless AI access
+- **NATIVE**: Use GitHub Copilot, Claude, GPT-4o directly from VS Code without API keys
+- **AUTOMATIC**: Auto-discovery of available VS Code language models
+- **FALLBACK**: Intelligent fallback to traditional API providers when VS Code is unavailable
+- **EXTENSION**: Support for Continue, Codeium, TabNine, and other VS Code AI extensions
+
+#### 🎨 **Visual Diagram Generation - Images Not Text**
+- **VISUAL**: Generate actual PNG/SVG diagram images using Mermaid CLI and Puppeteer
+- **INTERACTIVE**: HTML interactive diagrams with zoom, pan, and download capabilities
+- **COMPREHENSIVE**: Project structure, dependency graphs, class diagrams, function flows
+- **DATABASE**: Entity Relationship diagrams for SQL files with visual model connections
+- **ARCHITECTURE**: System architecture diagrams showing layers and component relationships
+- **FALLBACK**: Text-based diagrams when image generation tools are unavailable
+
+#### 📚 **Enhanced Modular Documentation with Deep Cross-Linking**
+- **INTELLIGENT**: Automatic module grouping by function (API, Core, Utils, Services, Database)
+- **CONNECTED**: Deep cross-referencing between related modules and groups
+- **NAVIGATION**: Overview → Groups → Individual Modules with breadcrumb navigation
+- **INDEX**: Complete cross-reference index showing all documentation relationships
+- **STATISTICS**: Module counts, function/class statistics per group
+- **DEPENDENCIES**: Visual dependency mapping between module groups
+
+#### ⚙️ **Advanced Configuration & Path Handling**
+- **NORMALIZED**: Fixed double backslash issues in Windows paths for clean configs
+- **FLEXIBLE**: Configurable documentation output directories (not just ./docs)
+- **CUSTOM**: Custom documentation folder naming (--docs-folder option)
+- **CROSS-PLATFORM**: Consistent path handling across Windows, macOS, and Linux
+
+#### 🤖 **Comprehensive AI Model Registry & Validation**
+- **CURRENT**: Complete registry of latest AI models from OpenAI, Anthropic, Google, xAI
+- **VALIDATION**: Real-time model ID validation with provider matching
+- **SUGGESTIONS**: Smart model suggestions when invalid models are specified
+- **DEPRECATION**: Automatic detection of deprecated models with upgrade suggestions
+- **PRICING**: Built-in cost estimation for token usage across providers
+- **CAPABILITIES**: Model capability matching for specific documentation tasks
+
+### 📊 **AI Model Support (Updated September 2025)**
+
+#### **OpenAI Models**
+- GPT-4o, GPT-4o Mini, GPT-4 Turbo, GPT-3.5 Turbo
+- **NEW**: GPT-5, GPT-5 Mini, GPT-5 Nano (latest models)
+
+#### **Anthropic Models**
+- Claude 3.5 Sonnet, Claude 3.5 Haiku, Claude 3 Opus
+- **NEW**: Claude Opus 4, Claude 3.7 Sonnet (latest models)
+
+#### **Google Gemini Models**
+- Gemini 2.0 Flash, Gemini 2.5 Pro, Gemini 1.5 Flash/Pro
+- **NEW**: Gemini 2.5 Flash with enhanced capabilities
+
+#### **xAI Grok Models**
+- Grok 3, Grok 3 Mini, **NEW**: Grok 4 with multimodal support
+
+#### **Local/Offline Models**
+- Llama 3.1 (8B/70B), Code Llama, Mistral, Phi-3 Mini via Ollama
+
+### 🔧 **Technical Enhancements**
+
+#### **Visual Generation Pipeline**
+- **Mermaid CLI Integration**: Professional diagram image generation
+- **Puppeteer Fallback**: Browser-based image generation when CLI unavailable
+- **Interactive HTML**: Zoomable, downloadable diagrams with modern UI
+- **Multiple Formats**: PNG, SVG support with customizable themes and sizing
+
+#### **Modular Architecture**
+- **ModularDocumentationGenerator**: Dedicated class for enhanced documentation
+- **VisualDiagramGenerator**: Specialized visual generation with multiple fallbacks
+- **ModelRegistry**: Comprehensive AI model validation and management system
+
+#### **Enhanced CLI**
+- **New Options**: --docs-folder, --use-vscode for flexible configuration
+- **Better Validation**: Real-time AI model and provider validation
+- **Improved Feedback**: Detailed progress reporting with file-by-file status
+
+### 💡 **New Documentation Structure**
+
+```
+docs/
+├── overview.md                    # Project overview with navigation
+├── groups/                        # Module group documentation
+│   ├── api-routes.md             # API & Routes group
+│   ├── core-system.md            # Core system components
+│   ├── utilities.md              # Helper functions
+│   └── database.md               # Database models
+├── modules/                       # Individual module docs
+│   ├── user-service.md           # Detailed module documentation
+│   └── auth-controller.md        # With cross-references
+├── diagrams/                      # Visual diagrams
+│   ├── project-structure.png     # Image files
+│   ├── dependency-graph.html     # Interactive versions
+│   └── database-er-diagram.svg   # Multiple formats
+├── cross-references.md           # Complete cross-reference index
+├── database-overview.md          # Database documentation hub
+└── diagrams.md                   # Visual diagram index
+```
+
+### 🛡️ **Bulletproof Reliability (Inherited from v1.2.7)**
+- **100% Success Guarantee**: Multiple fallback layers ensure documentation is always generated
+- **Retry Logic**: 3-attempt retry system with exponential backoff for all operations
+- **Emergency Fallbacks**: Emergency documentation created even during catastrophic failures
+- **Individual Error Isolation**: Module failures don't stop entire process
+
+### ⚡ **Performance Improvements**
+- **Immediate File Writing**: Documentation files written as generated (real-time)
+- **Chunked Processing**: Intelligent token management prevents API overflow
+- **Parallel Generation**: Concurrent diagram generation for faster processing
+- **Smart Caching**: Optimized caching for repeated generation tasks
+
+### 🎯 **User Experience**
+- **Real-time Feedback**: See files being generated live during process
+- **Interactive Diagrams**: Click, zoom, and download visual documentation
+- **Smart Navigation**: Breadcrumb navigation between related documentation
+- **Error Guidance**: Detailed error messages with suggested solutions
+
+### 📖 **Configuration Examples**
+
+#### **VS Code Integration**
+```json
+{
+  "sourceDir": "./src",
+  "outputDir": "./documentation",
+  "ai": {
+    "provider": "vscode-extension",
+    "useVSCodeExtensions": true,
+    "preferVSCodeExtensions": true,
+    "model": "gpt-4o"
+  }
+}
+```
+
+#### **Visual Diagram Configuration**
+```bash
+# Generate with custom docs folder and VS Code integration
+scribeverse generate --docs-folder technical-docs --use-vscode
+
+# Generate with specific output directory
+scribeverse generate -o ./project-documentation
+```
+
+---
+
+## 🚀 Version 1.2.7 - Previous Release
 
 **Release Date:** September 24, 2025
 **Status:** Stable - Bulletproof Fallback System

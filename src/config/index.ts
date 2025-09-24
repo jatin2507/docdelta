@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as yaml from 'yaml';
 import { config as dotenvConfig } from 'dotenv';
 import { DocDeltaConfig, Language } from '../types';
+import { ModelValidator, EXAMPLE_CONFIGS, MODEL_VALIDATION_ERRORS } from '../core/ai/model-registry';
 
 dotenvConfig();
 
@@ -23,19 +24,25 @@ export class ConfigManager {
     // Check if docs directory already exists
     if (fs.existsSync(docsDir)) {
       console.log('Found existing docs directory, using it for output');
-      return docsDir;
+      return this.normalizePath(docsDir);
     }
 
     // Check if there's a docs directory specified in environment
     if (process.env.DOCDELTA_OUTPUT_DIR) {
       const envOutputDir = path.resolve(cwd, process.env.DOCDELTA_OUTPUT_DIR);
       console.log(`Using output directory from environment: ${envOutputDir}`);
-      return envOutputDir;
+      return this.normalizePath(envOutputDir);
     }
 
     // Default to creating docs in current directory
     console.log(`Will create docs directory at: ${docsDir}`);
-    return docsDir;
+    return this.normalizePath(docsDir);
+  }
+
+  private normalizePath(filePath: string): string {
+    // Convert backslashes to forward slashes for cross-platform compatibility
+    // and consistency in config files
+    return filePath.replace(/\\/g, '/');
   }
 
   static getInstance(): ConfigManager {
@@ -47,7 +54,7 @@ export class ConfigManager {
 
   private loadConfig(): DocDeltaConfig {
     const defaultConfig: DocDeltaConfig = {
-      sourceDir: process.cwd(),
+      sourceDir: this.normalizePath(process.cwd()),
       outputDir: this.determineOutputDir(),
       include: ['**/*.{js,ts,jsx,tsx,py,go,rs,java,cpp,sql}'],
       exclude: [
@@ -150,6 +157,9 @@ export class ConfigManager {
         model: process.env.AI_MODEL || 'gpt-4o-mini',
         maxTokens: parseInt(process.env.MAX_TOKENS || '4000', 10),
         temperature: parseFloat(process.env.AI_TEMPERATURE || '0.2'),
+        useVSCodeExtensions: process.env.USE_VSCODE_EXTENSIONS === 'true',
+        preferVSCodeExtensions: process.env.PREFER_VSCODE_EXTENSIONS === 'true',
+        vscodeExtensions: [],
       },
       git: {
         enabled: process.env.ENABLE_GIT !== 'false',
@@ -225,39 +235,103 @@ export class ConfigManager {
 
   updateConfig(updates: Partial<DocDeltaConfig>): void {
     this.config = this.mergeConfigs(this.config, updates);
+    // Normalize paths after updates
+    if (this.config.sourceDir) {
+      this.config.sourceDir = this.normalizePath(this.config.sourceDir);
+    }
+    if (this.config.outputDir) {
+      this.config.outputDir = this.normalizePath(this.config.outputDir);
+    }
   }
 
   saveConfig(): void {
-    fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2), 'utf8');
+    // Ensure paths are normalized before saving
+    const normalizedConfig = {
+      ...this.config,
+      sourceDir: this.normalizePath(this.config.sourceDir),
+      outputDir: this.normalizePath(this.config.outputDir)
+    };
+    fs.writeFileSync(this.configPath, JSON.stringify(normalizedConfig, null, 2), 'utf8');
   }
 
   validateConfig(): string[] {
     const errors: string[] = [];
 
+    // Validate AI provider and model
+    const provider = this.config.ai.provider || 'openai';
+    const model = this.config.ai.model || 'gpt-4o-mini';
+
+    // Validate model exists and matches provider
+    if (!ModelValidator.isValidModel(model, provider)) {
+      if (!ModelValidator.getModelInfo(model)) {
+        errors.push(`${MODEL_VALIDATION_ERRORS.INVALID_MODEL} Model ID: '${model}'`);
+        const suggestions = ModelValidator.getModelsForProvider(provider).slice(0, 3).map(m => m.id);
+        if (suggestions.length > 0) {
+          errors.push(`Suggested models for ${provider}: ${suggestions.join(', ')}`);
+        }
+      } else {
+        errors.push(`${MODEL_VALIDATION_ERRORS.PROVIDER_MISMATCH} Model '${model}' does not belong to provider '${provider}'`);
+      }
+    }
+
+    // Check if model is deprecated
+    if (ModelValidator.isModelDeprecated(model)) {
+      errors.push(`${MODEL_VALIDATION_ERRORS.DEPRECATED_MODEL} Model: '${model}'`);
+      const similar = ModelValidator.findSimilarModels(model);
+      if (similar.length > 0) {
+        errors.push(`Consider using: ${similar[0].id} instead`);
+      }
+    }
+
+    // Validate API key based on provider
     if (!this.config.ai.apiKey) {
-      const provider = this.config.ai.provider || 'openai';
       switch (provider.toLowerCase()) {
         case 'openai':
           errors.push('OpenAI API key is required. Set OPENAI_API_KEY environment variable or add it to your config file.');
+          errors.push(`Example config: ${JSON.stringify(EXAMPLE_CONFIGS.openai, null, 2)}`);
           break;
         case 'anthropic':
           errors.push('Anthropic API key is required. Set ANTHROPIC_API_KEY environment variable or add it to your config file.');
+          errors.push(`Example config: ${JSON.stringify(EXAMPLE_CONFIGS.anthropic, null, 2)}`);
           break;
         case 'google-gemini':
           errors.push('Google Gemini API key is required. Set GOOGLE_AI_API_KEY environment variable or add it to your config file.');
+          errors.push(`Example config: ${JSON.stringify(EXAMPLE_CONFIGS.google, null, 2)}`);
           break;
         case 'github-copilot':
           errors.push('GitHub token is required. Set GITHUB_TOKEN environment variable or add it to your config file.');
           break;
         case 'grok':
           errors.push('xAI API key is required. Set XAI_API_KEY environment variable or add it to your config file.');
+          errors.push(`Example config: ${JSON.stringify(EXAMPLE_CONFIGS.grok, null, 2)}`);
           break;
         case 'ollama':
           // Ollama usually doesn't require API key for local usage
+          if (!this.config.ai.baseURL) {
+            errors.push('Ollama base URL is recommended. Set it to http://localhost:11434 or your Ollama server URL.');
+            errors.push(`Example config: ${JSON.stringify(EXAMPLE_CONFIGS.ollama, null, 2)}`);
+          }
+          break;
+        case 'vscode-extension':
+          // VS Code extension provider doesn't require API key but needs VS Code
+          try {
+            // This will be checked asynchronously during provider creation
+            require('../core/ai/providers/vscode-extension');
+          } catch {
+            errors.push('VS Code extension provider requires VS Code to be installed and accessible.');
+          }
           break;
         default:
           errors.push(`AI API key is required for provider: ${provider}. Please add it to your config file.`);
       }
+    }
+
+    // Validate model capabilities for documentation tasks
+    const requiredCapabilities = ['text', 'code'];
+    if (!ModelValidator.validateModelForTask(model, requiredCapabilities)) {
+      errors.push(`${MODEL_VALIDATION_ERRORS.INSUFFICIENT_CAPABILITIES} Model '${model}' may not be suitable for documentation generation.`);
+      const suitableModels = ModelValidator.getModelsByCapability('code').slice(0, 3);
+      errors.push(`Code-specialized models: ${suitableModels.map(m => m.id).join(', ')}`);
     }
 
     if (!fs.existsSync(this.config.sourceDir)) {

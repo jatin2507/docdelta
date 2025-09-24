@@ -74,7 +74,7 @@ export enum DocType {
 
 export interface AIConfig {
   // Provider configuration
-  provider?: string; // AI provider to use (e.g., 'openai', 'anthropic', 'grok', etc.)
+  provider?: string; // AI provider to use (e.g., 'openai', 'anthropic', 'grok', 'vscode-extension', etc.)
   apiKey?: string;
   model?: string;
   maxTokens?: number;
@@ -106,9 +106,24 @@ export interface AIConfig {
   copilotAccessMethod?: 'api' | 'vscode' | 'language-server' | 'auto';
   vscodeExtensionPath?: string;
 
+  // VS Code Extension Integration
+  vscodeExtensions?: VSCodeExtensionConfig[];
+  useVSCodeExtensions?: boolean;
+  preferVSCodeExtensions?: boolean;
+
   // Grok AI specific options
   enableSearch?: boolean; // For Grok's Live Search capability
   reasoningEffort?: 'low' | 'medium' | 'high'; // For grok-3-mini models
+}
+
+export interface VSCodeExtensionConfig {
+  id: string; // Extension ID (e.g., 'ms-vscode.vscode-ai', 'GitHub.copilot')
+  name: string; // Human-readable name
+  provider: string; // AI provider type (e.g., 'openai', 'anthropic', 'claude', 'copilot')
+  model?: string; // Model to use
+  enabled: boolean;
+  priority?: number; // Higher priority extensions are tried first
+  settings?: Record<string, any>; // Extension-specific settings
 }
 
 export interface DocDeltaConfig {
@@ -153,6 +168,9 @@ export interface GeneratedFile {
   path: string;
   content: string;
   type: DocType;
+  module?: string; // Reference to the source module
+  crossReferences?: string[]; // List of related files
+  tags?: string[]; // File categorization tags
 }
 
 export interface GenerationStats {

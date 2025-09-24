@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
+import * as path from 'path';
 import { ConfigManager } from '../config';
 import { ParserFactory } from '../core/parser';
 import { DocumentationGenerator } from '../core/generator';
@@ -27,20 +28,33 @@ program
   .description('Generate complete documentation for the codebase')
   .option('-s, --source <path>', 'Source directory path', process.cwd())
   .option('-o, --output <path>', 'Output directory for documentation', './docs')
+  .option('--docs-folder <name>', 'Custom documentation folder name (default: docs)')
   .option('-i, --include <patterns...>', 'File patterns to include')
   .option('-e, --exclude <patterns...>', 'File patterns to exclude')
   .option('--no-git', 'Disable git integration')
   .option('--no-cache', 'Disable caching')
+  .option('--use-vscode', 'Prefer VS Code Language Model API if available')
   .action(async (options) => {
     const spinner = ora('Initializing ScribeVerse...').start();
 
     try {
       const config = ConfigManager.getInstance();
+
+      // Handle custom docs folder name
+      let outputDir = options.output;
+      if (options.docsFolder) {
+        outputDir = path.join(process.cwd(), options.docsFolder);
+      }
+
       config.updateConfig({
         sourceDir: options.source,
-        outputDir: options.output,
+        outputDir: outputDir,
         include: options.include,
         exclude: options.exclude,
+        ai: {
+          ...config.getConfig().ai,
+          preferVSCodeExtensions: options.useVscode || false
+        }
       });
 
       const configErrors = config.validateConfig();

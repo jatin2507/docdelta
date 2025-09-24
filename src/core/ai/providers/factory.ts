@@ -6,6 +6,7 @@ import { GitHubCopilotProvider } from './github-copilot';
 import { OllamaProvider } from './ollama';
 import { LiteLLMProvider } from './litellm';
 import { GrokProvider } from './grok';
+import { VSCodeExtensionProvider } from './vscode-extension';
 
 export class AIProviderFactory {
   private static providers = new Map<AIProvider, new (config: AIProviderConfig) => IAIProvider>([
@@ -16,6 +17,7 @@ export class AIProviderFactory {
     [AIProvider.OLLAMA, OllamaProvider],
     [AIProvider.LITELLM, LiteLLMProvider],
     [AIProvider.GROK, GrokProvider],
+    [AIProvider.VSCODE_EXTENSION, VSCodeExtensionProvider],
   ]);
 
   static create(config: AIProviderConfig): IAIProvider {
@@ -100,6 +102,14 @@ export class AIProviderFactory {
         isLocal: false,
         isSpecializedForCode: true,
         description: 'xAI Grok models with real-time search and advanced reasoning capabilities',
+      },
+      [AIProvider.VSCODE_EXTENSION]: {
+        name: 'VS Code Language Model',
+        requiresApiKey: false,
+        supportedFeatures: ['text', 'code', 'streaming', 'integrated'],
+        isLocal: false,
+        isSpecializedForCode: true,
+        description: 'Direct integration with VS Code Language Model API (GPT-4o, Claude, Copilot)',
       },
     };
 

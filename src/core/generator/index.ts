@@ -12,6 +12,8 @@ import {
 } from '../../types';
 import { AIService } from '../../core/ai';
 import { ConfigManager } from '../../config';
+import { ModularDocumentationGenerator } from './modular-docs-generator';
+import { VisualDiagramGenerator } from './visual-diagram-generator';
 
 export class DocumentationGenerator {
   private config: DocDeltaConfig;
@@ -47,7 +49,7 @@ export class DocumentationGenerator {
     const startTime = Date.now();
     const sections: DocumentationSection[] = [];
     const files: GeneratedFile[] = [];
-    const totalSteps = 7; // Overview, Architecture, API, Database, Modules, AST, WriteFiles
+    const totalSteps = 8; // Overview, Architecture, API, Database, Modules, ModularDocs, AST, WriteFiles
     let currentStep = 0;
 
     await fs.ensureDir(this.outputDir);
@@ -187,47 +189,128 @@ export class DocumentationGenerator {
         this.stats.errors.push(`Module documentation failed: ${error instanceof Error ? error.message : String(error)}`);
       }
 
-      // Step 6: Generate AST Charts (Always - Write Immediately with Bulletproof Fallback)
-      this.updateProgress('Generating AST charts and diagrams...', ++currentStep, totalSteps);
+      // Step 5.5: Generate Enhanced Modular Documentation with Cross-linking
+      this.updateProgress('Creating modular documentation with cross-references...', ++currentStep, totalSteps);
       try {
-        await fs.ensureDir(path.join(this.outputDir, 'docs', 'ast'));
-        const astCharts = this.generateASTChartsForAllModules(modules);
-        if (astCharts.length > 0) {
-          for (const chart of astCharts) {
-            try {
-              const astFile = this.createFile(`docs/ast/${chart.id}.md`, chart, DocType.MODULE);
-              await this.writeFileImmediately(astFile);
-              files.push(astFile);
-              console.log(`✅ docs/ast/${chart.id}.md generated successfully`);
-            } catch (writeError) {
-              console.error(`❌ Failed to write AST file for ${chart.id}: ${writeError instanceof Error ? writeError.message : String(writeError)}`);
-              this.stats.errors.push(`AST file write failed for ${chart.id}: ${writeError instanceof Error ? writeError.message : String(writeError)}`);
-            }
-          }
-        } else {
-          console.log('ℹ️ No AST charts generated, creating basic fallback...');
-          const basicAST = this.createBasicASTFallback(modules);
-          if (basicAST) {
-            const astFile = this.createFile('docs/ast/basic-analysis.md', basicAST, DocType.MODULE);
-            await this.writeFileImmediately(astFile);
-            files.push(astFile);
-            console.log('✅ docs/ast/basic-analysis.md (fallback) generated successfully');
-          }
+        const modularGenerator = new ModularDocumentationGenerator(this.config, this.aiService, this.outputDir);
+        const modularFiles = await modularGenerator.generateModularDocumentation(modules);
+        for (const modularFile of modularFiles) {
+          await this.writeFileImmediately(modularFile);
+          files.push(modularFile);
+          console.log(`✅ ${path.relative(this.outputDir, modularFile.path)} generated successfully`);
         }
+        console.log(`✅ Generated ${modularFiles.length} modular documentation files with cross-linking`);
       } catch (error) {
-        console.warn(`⚠️ AST generation failed completely, creating emergency fallback...`);
-        console.error(`AST error: ${error instanceof Error ? error.message : String(error)}`);
+        console.warn(`⚠️ Enhanced modular documentation failed, skipping...`);
+        console.error(`Modular docs error: ${error instanceof Error ? error.message : String(error)}`);
+        this.stats.errors.push(`Enhanced modular documentation failed: ${error instanceof Error ? error.message : String(error)}`);
+      }
+
+      // Step 6: Generate Visual Diagrams (Always - Write Immediately with Bulletproof Fallback)
+      this.updateProgress('Generating visual diagrams and charts...', ++currentStep, totalSteps);
+      try {
+        const visualGenerator = new VisualDiagramGenerator(this.outputDir);
+        await visualGenerator.initialize();
+
+        // Generate multiple types of visual diagrams
+        const diagramResults = [];
+
+        // 1. Project Structure Diagram
         try {
-          await fs.ensureDir(path.join(this.outputDir, 'docs', 'ast'));
-          const emergencyAST = this.createEmergencyASTFallback(modules);
-          const astFile = this.createFile('docs/ast/emergency-analysis.md', emergencyAST, DocType.MODULE);
-          await this.writeFileImmediately(astFile);
-          files.push(astFile);
-          console.log('✅ docs/ast/emergency-analysis.md (emergency fallback) generated successfully');
-        } catch (emergencyError) {
-          console.error(`❌ Even emergency AST fallback failed: ${emergencyError instanceof Error ? emergencyError.message : String(emergencyError)}`);
+          const projectDiagram = await visualGenerator.generateProjectStructureDiagram(modules);
+          if (projectDiagram.success) {
+            diagramResults.push(projectDiagram);
+            console.log('✅ Project structure diagram generated successfully');
+          }
+        } catch (err) {
+          console.warn(`⚠️ Project structure diagram failed: ${err instanceof Error ? err.message : String(err)}`);
         }
-        this.stats.errors.push(`AST generation failed: ${error instanceof Error ? error.message : String(error)}`);
+
+        // 2. Dependency Graph Diagram
+        try {
+          const depDiagram = await visualGenerator.generateDependencyDiagram(modules);
+          if (depDiagram.success) {
+            diagramResults.push(depDiagram);
+            console.log('✅ Dependency graph diagram generated successfully');
+          }
+        } catch (err) {
+          console.warn(`⚠️ Dependency diagram failed: ${err instanceof Error ? err.message : String(err)}`);
+        }
+
+        // 3. System Architecture Diagram
+        try {
+          const archDiagram = await visualGenerator.generateSystemArchitectureDiagram(modules);
+          if (archDiagram.success) {
+            diagramResults.push(archDiagram);
+            console.log('✅ System architecture diagram generated successfully');
+          }
+        } catch (err) {
+          console.warn(`⚠️ Architecture diagram failed: ${err instanceof Error ? err.message : String(err)}`);
+        }
+
+        // 4. Database ER Diagram (if SQL files exist)
+        const sqlModules = modules.filter(m => m.language.toLowerCase() === 'sql');
+        if (sqlModules.length > 0) {
+          try {
+            const dbDiagram = await visualGenerator.generateDatabaseERDiagram(sqlModules);
+            if (dbDiagram.success) {
+              diagramResults.push(dbDiagram);
+              console.log('✅ Database ER diagram generated successfully');
+            }
+          } catch (err) {
+            console.warn(`⚠️ Database ER diagram failed: ${err instanceof Error ? err.message : String(err)}`);
+          }
+        }
+
+        // 5. Individual module diagrams for complex modules
+        const complexModules = modules.filter(m =>
+          m.chunks.filter(c => c.type === 'class' || c.type === 'function').length >= 5
+        );
+
+        for (const module of complexModules.slice(0, 5)) { // Limit to 5 most complex modules
+          try {
+            const classDiagram = await visualGenerator.generateClassDiagram(module);
+            if (classDiagram.success) {
+              diagramResults.push(classDiagram);
+              console.log(`✅ Class diagram for ${module.name} generated successfully`);
+            }
+          } catch (err) {
+            console.warn(`⚠️ Class diagram for ${module.name} failed: ${err instanceof Error ? err.message : String(err)}`);
+          }
+
+          try {
+            const flowDiagram = await visualGenerator.generateFunctionFlowDiagram(module);
+            if (flowDiagram.success) {
+              diagramResults.push(flowDiagram);
+              console.log(`✅ Function flow diagram for ${module.name} generated successfully`);
+            }
+          } catch (err) {
+            console.warn(`⚠️ Function flow diagram for ${module.name} failed: ${err instanceof Error ? err.message : String(err)}`);
+          }
+        }
+
+        // Create diagram index file
+        const diagramIndexContent = this.createDiagramIndexContent(diagramResults, modules);
+        const diagramIndexFile = this.createFile('docs/diagrams.md', diagramIndexContent, DocType.DIAGRAM);
+        await this.writeFileImmediately(diagramIndexFile);
+        files.push(diagramIndexFile);
+
+        console.log(`✅ Generated ${diagramResults.length} visual diagrams successfully`);
+
+      } catch (error) {
+        console.warn(`⚠️ Visual diagram generation failed completely, creating text fallback...`);
+        console.error(`Diagram error: ${error instanceof Error ? error.message : String(error)}`);
+        try {
+          await fs.ensureDir(path.join(this.outputDir, 'docs'));
+          const textFallbackContent = this.createTextDiagramFallback(modules);
+          const textFallbackFile = this.createFile('docs/text-diagrams.md', textFallbackContent, DocType.DIAGRAM);
+          await this.writeFileImmediately(textFallbackFile);
+          files.push(textFallbackFile);
+          console.log('✅ Text diagram fallback generated successfully');
+        } catch (fallbackError) {
+          console.error(`❌ Even text diagram fallback failed: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`);
+        }
+        this.stats.errors.push(`Visual diagram generation failed: ${error instanceof Error ? error.message : String(error)}`);
       }
 
       // Step 7: Complete (Files Already Written)
@@ -1281,5 +1364,197 @@ ${modules.map(module => `### ${module.name}
         timestamp: new Date().toISOString()
       }
     };
+  }
+
+  // New methods for visual diagram support
+  private createDiagramIndexContent(diagramResults: any[], modules: ParsedModule[]): DocumentationSection {
+    const successful = diagramResults.filter(d => d.success);
+    const failed = diagramResults.filter(d => !d.success);
+
+    const content = `# 📊 Visual Diagrams & Charts
+
+## 🎯 Overview
+
+This page contains visual representations of your codebase structure, dependencies, and architecture generated automatically by ScribeVerse.
+
+### 📈 Generation Summary
+- **Total Diagrams Generated**: ${successful.length}
+- **Failed Attempts**: ${failed.length}
+- **Modules Analyzed**: ${modules.length}
+
+## 🖼️ Available Diagrams
+
+${successful.map(diagram => {
+  const name = path.basename(diagram.imagePath || diagram.htmlPath || 'diagram', path.extname(diagram.imagePath || diagram.htmlPath || ''));
+  const isImage = diagram.imagePath && fs.existsSync(diagram.imagePath);
+  const hasHtml = diagram.htmlPath && fs.existsSync(diagram.htmlPath);
+
+  return `### ${this.getDiagramTitle(name)}
+
+${hasHtml ? `**[🌐 Interactive Version](./diagrams/${path.basename(diagram.htmlPath || '')})**` : ''}
+${isImage ? `![${name}](./diagrams/${path.basename(diagram.imagePath || '')})` : ''}
+
+**Mermaid Code:**
+\`\`\`mermaid
+${diagram.mermaidCode}
+\`\`\`
+
+---`;
+}).join('\n\n')}
+
+${failed.length > 0 ? `## ⚠️ Failed Diagrams
+
+The following diagrams could not be generated:
+${failed.map(f => `- **${f.name}**: ${f.error || 'Unknown error'}`).join('\n')}
+
+*Note: Interactive HTML versions are still available even when image generation fails.*` : ''}
+
+## 💡 How to Use
+
+1. **Interactive Diagrams**: Click the 🌐 links to view zoomable, interactive versions
+2. **Image Downloads**: Right-click images and save for presentations
+3. **Mermaid Code**: Copy the code blocks to use in your own documentation
+
+## 🔧 Technical Details
+
+- **Format**: PNG images with HTML interactive fallbacks
+- **Theme**: Default Mermaid theme with customizations
+- **Generated**: ${new Date().toLocaleDateString()}
+- **Tool**: ScribeVerse Visual Diagram Generator
+
+---
+
+*Visual diagrams automatically generated and updated with each documentation build*`;
+
+    return {
+      id: 'visual-diagrams-index',
+      type: DocType.DIAGRAM,
+      title: '📊 Visual Diagrams & Charts',
+      content,
+      children: [],
+      metadata: {
+        diagramCount: successful.length,
+        failedCount: failed.length,
+        moduleCount: modules.length,
+        timestamp: new Date().toISOString()
+      }
+    };
+  }
+
+  private createTextDiagramFallback(modules: ParsedModule[]): DocumentationSection {
+    const content = `# 📋 Text-Based Diagrams
+
+## ⚠️ Visual Diagram Generation Unavailable
+
+Visual diagram generation failed, but we've created text-based representations of your codebase structure.
+
+## 🏗️ Project Structure
+
+\`\`\`
+${this.createTextProjectStructure(modules)}
+\`\`\`
+
+## 🔗 Module Dependencies
+
+${this.createTextDependencyTree(modules)}
+
+## 📊 Statistics
+
+- **Total Files**: ${modules.length}
+- **Languages**: ${[...new Set(modules.map(m => m.language))].join(', ')}
+- **Total Functions**: ${modules.reduce((sum, m) => sum + m.chunks.filter(c => c.type === 'function').length, 0)}
+- **Total Classes**: ${modules.reduce((sum, m) => sum + m.chunks.filter(c => c.type === 'class').length, 0)}
+
+## 🛠️ To Enable Visual Diagrams
+
+1. Install Mermaid CLI: \`npm install -g @mermaid-js/mermaid-cli\`
+2. Or install locally: \`npm install --save-dev @mermaid-js/mermaid-cli\`
+3. Re-run documentation generation
+
+---
+
+*Text fallback generated when visual diagram tools are unavailable*`;
+
+    return {
+      id: 'text-diagram-fallback',
+      type: DocType.DIAGRAM,
+      title: '📋 Text-Based Diagrams',
+      content,
+      children: [],
+      metadata: {
+        fallback: true,
+        moduleCount: modules.length,
+        timestamp: new Date().toISOString()
+      }
+    };
+  }
+
+  private getDiagramTitle(name: string): string {
+    const titles: { [key: string]: string } = {
+      'project-structure': '🏗️ Project Structure',
+      'dependency-graph': '🔗 Dependency Graph',
+      'system-architecture': '🏛️ System Architecture',
+      'database-er-diagram': '🗄️ Database ER Diagram'
+    };
+
+    return titles[name] || name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  private createTextProjectStructure(modules: ParsedModule[]): string {
+    const structure = new Map<string, string[]>();
+
+    for (const module of modules) {
+      const dir = path.dirname(module.path) || 'root';
+      if (!structure.has(dir)) {
+        structure.set(dir, []);
+      }
+      structure.get(dir)!.push(module.name);
+    }
+
+    let result = 'Project/\n';
+    for (const [dir, files] of structure.entries()) {
+      const dirName = dir === 'root' ? '.' : dir;
+      result += `├── ${dirName}/\n`;
+      files.forEach((file, index) => {
+        const isLast = index === files.length - 1;
+        result += `${isLast ? '└──' : '├──'} ${file}\n`;
+      });
+    }
+
+    return result;
+  }
+
+  private createTextDependencyTree(modules: ParsedModule[]): string {
+    let result = '';
+
+    for (const module of modules.slice(0, 10)) {
+      result += `### ${module.name}\n\n`;
+
+      if (module.imports.length > 0) {
+        result += '**Imports:**\n';
+        module.imports.slice(0, 5).forEach(imp => {
+          result += `- \`${imp}\`\n`;
+        });
+        if (module.imports.length > 5) {
+          result += `- ... and ${module.imports.length - 5} more\n`;
+        }
+        result += '\n';
+      }
+
+      if (module.dependencies.length > 0) {
+        result += '**Dependencies:**\n';
+        module.dependencies.slice(0, 3).forEach(dep => {
+          result += `- ${dep.type}: \`${dep.target}\`\n`;
+        });
+        if (module.dependencies.length > 3) {
+          result += `- ... and ${module.dependencies.length - 3} more\n`;
+        }
+        result += '\n';
+      }
+
+      result += '---\n\n';
+    }
+
+    return result;
   }
 }
