@@ -1,0 +1,130 @@
+# DocDelta Configuration Example
+# Copy this file to .docdelta.yml and customize for your project
+
+# Source directory to scan for code files
+sourceDir: ./src
+
+# Output directory for generated documentation
+outputDir: ./docs
+
+# File patterns to include (glob patterns)
+include:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.py"
+  - "**/*.go"
+  - "**/*.rs"
+  - "**/*.java"
+  - "**/*.cpp"
+  - "**/*.sql"
+
+# File patterns to exclude
+exclude:
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/.git/**"
+  - "**/vendor/**"
+  - "**/__pycache__/**"
+  - "**/target/**"
+
+# Languages to process
+languages:
+  - typescript
+  - javascript
+  - python
+  - go
+  - rust
+  - java
+  - cpp
+  - sql
+
+# AI Configuration
+ai:
+  # OpenAI API key (can use environment variable)
+  apiKey: ${OPENAI_API_KEY}
+
+  # Model to use for generation
+  # Options: gpt-4-turbo-preview, gpt-4, gpt-3.5-turbo
+  model: gpt-4-turbo-preview
+
+  # Maximum tokens per request
+  maxTokens: 2000
+
+  # Temperature for generation (0-1, lower = more deterministic)
+  temperature: 0.7
+
+  # Optional: Custom OpenAI API base URL
+  # baseURL: https://api.openai.com/v1
+
+# Git Integration
+git:
+  # Enable git operations
+  enabled: true
+
+  # Automatically push after commit
+  autoPush: false
+
+  # Remote repository name
+  remote: origin
+
+  # Branch to push to
+  branch: main
+
+  # Prefix for commit messages
+  commitPrefix: "docs:"
+
+# Metadata and Caching
+metadata:
+  # Directory for metadata storage
+  dir: .metadata
+
+  # Directory for cache files
+  cacheDir: .docdelta-cache
+
+  # Enable caching for performance
+  enableCache: true
+
+# Documentation Generation Options
+generation:
+  # Generate architecture diagrams
+  generateDiagrams: true
+
+  # Include source code in API docs
+  includeSource: false
+
+  # Maximum depth for dependency analysis
+  dependencyDepth: 3
+
+  # Generate table of contents
+  generateTOC: true
+
+# Output Format Options
+output:
+  # Format: markdown, html, json
+  format: markdown
+
+  # Theme for HTML output
+  htmlTheme: default
+
+  # Include metadata in output files
+  includeMetadata: false
+
+# Advanced Options
+advanced:
+  # Maximum files to process in parallel
+  parallelism: 5
+
+  # Chunk size for processing
+  chunkSize: 100
+
+  # Timeout for AI requests (ms)
+  aiTimeout: 30000
+
+  # Retry failed AI requests
+  retryOnFailure: true
+
+  # Maximum retries
+  maxRetries: 3

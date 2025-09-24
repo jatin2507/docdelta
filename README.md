@@ -1,329 +1,552 @@
 # DocDelta
 
-A powerful multi-language documentation tool that generates comprehensive documentation suites from codebases with incremental updates and AI-powered summaries.
+**AI-Powered Documentation Generation for Codebases**
 
-## Features
+DocDelta is a powerful tool that analyzes your codebase and generates comprehensive documentation using advanced AI models. It intelligently parses your code, understands dependencies, and creates structured documentation that helps developers understand and maintain projects more effectively.
 
-- **Multi-Language Support**: Parse and document JavaScript, TypeScript, Python, Go, Rust, Java, C++, SQL, and MongoDB schemas
-- **AI-Optimized Flow Analysis**: Analyzes code from entry points, tracks execution flow, and generates AI-friendly documentation
-- **Incremental Updates**: Only process changed code chunks for efficient documentation updates
-- **AI-Powered Summaries**: Generate human-readable documentation using OpenAI's GPT models
-- **Comprehensive Documentation**: Creates architecture overviews, API references, database schemas, and module documentation
-- **Entry Point Detection**: Automatically identifies and follows code flow from application entry points
-- **Cross-Platform Support**: Works seamlessly on Windows, macOS, and Linux
-- **Git Integration**: Automatic commit and push of documentation updates with AI-generated commit messages
-- **Intelligent Caching**: Metadata and cache management for optimal performance
-- **Dependency Graph**: Visual representation of module relationships and dependencies
-- **MongoDB Schema Support**: Parses Mongoose schemas and MongoDB collection definitions
+## 🚀 Features
 
-## Installation
+- **Multi-Language Support**: TypeScript, JavaScript, Python, Go, Rust, Java, C++, SQL, and more
+- **AI-Powered Analysis**: Support for 7 major AI providers with 50+ models
+- **Intelligent Parsing**: Extracts functions, classes, interfaces, types, and dependencies
+- **Multiple Output Formats**: Markdown, HTML, JSON, and custom templates
+- **Incremental Updates**: Only processes changed files for efficiency
+- **Git Integration**: Automatic commits and push support
+- **Dependency Mapping**: Visualizes code relationships and imports
+- **Customizable Templates**: Flexible documentation generation
+
+## 🎯 Supported AI Providers
+
+| Provider | Models | Features |
+|----------|--------|----------|
+| **OpenAI** | GPT-4o, GPT-4-turbo, GPT-3.5-turbo | Text, Code, Embeddings, Vision |
+| **Anthropic** | Claude 3.5 Sonnet/Haiku, Claude 3 Opus | Advanced reasoning, Large context |
+| **Google Gemini** | Gemini 2.5/2.0/1.5 Pro/Flash | Multimodal, Code generation |
+| **GitHub Copilot** | GPT-4, Code models | Code-specialized, VS Code integration |
+| **xAI Grok** | Grok-4, Grok-3, Code-fast-1 | Real-time search, Reasoning |
+| **Ollama** | Llama, Mistral, CodeLlama, Qwen | Local execution, Privacy-focused |
+| **LiteLLM** | 100+ unified models | Multi-provider proxy |
+
+## 📦 Installation
 
 ```bash
-npm install -g doc-delta
+npm install -g docdelta
 ```
 
-Or install locally in your project:
-
+Or use with npx:
 ```bash
-npm install --save-dev doc-delta
+npx docdelta --help
 ```
 
-## Quick Start
+## 🏗️ Quick Start
 
-1. **Initialize DocDelta in your project:**
+### 1. Initialize Configuration
 
 ```bash
 docdelta init
 ```
 
-2. **Set your OpenAI API key:**
+This creates a `docdelta.config.json` with default settings.
 
-```bash
-export OPENAI_API_KEY=your-api-key-here
-```
+### 2. Configure AI Provider
 
-3. **Generate documentation:**
+Edit the generated config file:
 
-```bash
-docdelta generate
-```
-
-## Configuration
-
-DocDelta can be configured through:
-- Environment variables
-- `.docdelta.yml` configuration file
-- CLI command options
-
-### Environment Variables
-
-```bash
-OPENAI_API_KEY=your-openai-api-key
-DOC_OUTPUT_DIR=./docs
-ENABLE_GIT_PUSH=false
-LOG_LEVEL=info
-MAX_PARALLEL_CHUNKS=5
-CACHE_DIR=.docdelta-cache
-METADATA_DIR=.metadata
-```
-
-### Configuration File (.docdelta.yml)
-
-```yaml
-sourceDir: ./src
-outputDir: ./docs
-include:
-  - "**/*.ts"
-  - "**/*.js"
-  - "**/*.py"
-exclude:
-  - "**/node_modules/**"
-  - "**/dist/**"
-languages:
-  - typescript
-  - javascript
-  - python
-ai:
-  apiKey: ${OPENAI_API_KEY}
-  model: gpt-4-turbo-preview
-  maxTokens: 2000
-  temperature: 0.7
-git:
-  enabled: true
-  autoPush: false
-  remote: origin
-  branch: main
-  commitPrefix: "docs:"
-metadata:
-  dir: .metadata
-  cacheDir: .docdelta-cache
-  enableCache: true
-```
-
-## CLI Commands
-
-### Generate AI-Optimized Documentation with Flow Analysis
-
-Generate documentation that follows code flow from entry points, perfect for AI understanding:
-
-```bash
-docdelta ai-flow [options]
-
-Options:
-  -s, --source <path>       Source directory path (default: current directory)
-  -o, --output <path>       Output directory for AI docs (default: ./docs-ai)
-  -i, --include <patterns>  File patterns to include
-  -e, --exclude <patterns>  File patterns to exclude
-  --entry <files>           Specify entry point files
-  --no-git                  Disable git integration
-
-Example:
-docdelta ai-flow --source ./src --output ./ai-docs
-```
-
-This command will:
-1. Automatically detect entry points (main.js, index.ts, app.js, etc.)
-2. Follow import/export chains from entry points
-3. Build a complete dependency graph
-4. Generate structured documentation optimized for AI consumption
-5. Create execution flow documentation showing how modules interact
-
-### Generate Documentation
-
-Generate complete documentation for your codebase:
-
-```bash
-docdelta generate [options]
-
-Options:
-  -s, --source <path>       Source directory path (default: current directory)
-  -o, --output <path>       Output directory for documentation (default: ./docs)
-  -i, --include <patterns>  File patterns to include
-  -e, --exclude <patterns>  File patterns to exclude
-  --no-git                  Disable git integration
-  --no-cache                Disable caching
-```
-
-### Update Documentation
-
-Incrementally update documentation based on code changes:
-
-```bash
-docdelta update [options]
-
-Options:
-  -s, --source <path>  Source directory path (default: current directory)
-  -o, --output <path>  Output directory for documentation (default: ./docs)
-  --force              Force update all documentation
-```
-
-### Commit Changes
-
-Generate commit message and commit documentation changes:
-
-```bash
-docdelta commit [options]
-
-Options:
-  -m, --message <message>  Custom commit message
-  -p, --push               Push changes after commit
-```
-
-### Check Status
-
-Show documentation status and pending changes:
-
-```bash
-docdelta status
-```
-
-### Show Differences
-
-Show differences between current docs and pending updates:
-
-```bash
-docdelta diff-docs [options]
-
-Options:
-  -f, --file <path>  Show diff for specific file
-```
-
-## Documentation Types
-
-DocDelta generates multiple types of documentation:
-
-### 1. Architecture Documentation
-- System overview and component relationships
-- Dependency analysis and visualization
-- Design patterns and architectural decisions
-- Mermaid.js diagrams for visual representation
-
-### 2. API Reference
-- Function and method signatures
-- Parameter descriptions and types
-- Return value specifications
-- Usage examples
-
-### 3. Database Documentation
-- Table structures and relationships
-- Column specifications and constraints
-- Indexes and foreign keys
-- Views and stored procedures
-
-### 4. Module Documentation
-- Module purpose and responsibilities
-- Exported functions and classes
-- Internal implementation details
-- Dependencies and imports
-
-### 5. Project Overview
-- High-level project description
-- Key features and capabilities
-- Technology stack
-- Getting started guide
-
-## Programmatic Usage
-
-DocDelta can also be used programmatically in your Node.js applications:
-
-```typescript
-import {
-  ParserFactory,
-  DocumentationGenerator,
-  MetadataManager,
-  GitService
-} from 'doc-delta';
-
-// Parse source files
-const modules = await ParserFactory.parseDirectory('./src');
-
-// Generate documentation
-const generator = new DocumentationGenerator();
-const result = await generator.generate(modules);
-
-// Manage metadata
-const metadata = new MetadataManager();
-await metadata.initialize();
-await metadata.updateChunksMetadata(chunks);
-
-// Git operations
-const git = new GitService();
-await git.generateAndCommit(changedFiles);
-```
-
-## Advanced Features
-
-### Incremental Updates
-
-DocDelta tracks changes at the chunk level (functions, classes, methods) and only regenerates documentation for modified chunks:
-
-```bash
-# First generation creates full documentation and metadata
-docdelta generate
-
-# Subsequent runs only update changed chunks
-docdelta update
-```
-
-### Custom Parsers
-
-Extend DocDelta with custom language parsers:
-
-```typescript
-import { BaseParser } from 'doc-delta';
-
-class CustomParser extends BaseParser {
-  parse(filePath: string, content: string): ParsedModule {
-    // Custom parsing logic
+```json
+{
+  "sourceDir": "./src",
+  "outputDir": "./docs",
+  "ai": {
+    "provider": "openai",
+    "apiKey": "your-api-key",
+    "model": "gpt-4o-mini",
+    "maxTokens": 4000,
+    "temperature": 0.2
   }
 }
 ```
 
-### AI Model Configuration
+### 3. Generate Documentation
 
-Configure different AI models and parameters:
+```bash
+# Generate full documentation
+docdelta generate
 
-```yaml
-ai:
-  model: gpt-4-turbo-preview  # or gpt-3.5-turbo for faster/cheaper generation
-  maxTokens: 2000
-  temperature: 0.7  # Lower for more consistent output
+# Generate for specific files
+docdelta generate --include "src/**/*.ts"
+
+# Watch mode (regenerate on changes)
+docdelta generate --watch
 ```
 
-## Performance Optimization
+## ⚙️ Configuration
 
-- **Chunk-level Caching**: Only modified code chunks are sent to the AI
-- **Parallel Processing**: Multiple chunks processed concurrently
-- **Metadata Storage**: File hashes and summaries cached locally
-- **Incremental Updates**: Only changed files trigger documentation updates
+### Basic Configuration
 
-## Troubleshooting
+```json
+{
+  "sourceDir": "./src",
+  "outputDir": "./docs",
+  "include": ["**/*.{ts,js,py,go,rs,java,cpp,sql}"],
+  "exclude": ["node_modules/**", "dist/**", "*.test.*"],
+  "languages": ["typescript", "python", "sql"],
+  "ai": {
+    "provider": "openai",
+    "apiKey": "sk-...",
+    "model": "gpt-4o-mini"
+  }
+}
+```
 
-### Common Issues
+### AI Provider Configuration
 
-1. **API Key Not Found**
-   - Ensure `OPENAI_API_KEY` is set in environment variables
-   - Check `.env` file in project root
+#### OpenAI
+```json
+{
+  "ai": {
+    "provider": "openai",
+    "apiKey": "sk-...",
+    "model": "gpt-4o-mini",
+    "baseURL": "https://api.openai.com/v1"
+  }
+}
+```
 
-2. **Large Codebase Performance**
-   - Use `--exclude` patterns to skip unnecessary files
-   - Adjust `MAX_PARALLEL_CHUNKS` for your system
-   - Enable caching with `ENABLE_CACHE=true`
+#### Anthropic Claude
+```json
+{
+  "ai": {
+    "provider": "anthropic",
+    "apiKey": "sk-ant-...",
+    "model": "claude-3-5-sonnet-20241022",
+    "maxTokens": 4096
+  }
+}
+```
 
-3. **Git Integration Issues**
-   - Ensure working directory is clean before generating docs
-   - Check git remote configuration
-   - Verify branch permissions for pushing
+#### Google Gemini
+```json
+{
+  "ai": {
+    "provider": "google-gemini",
+    "apiKey": "AIza...",
+    "model": "gemini-2.0-flash-exp",
+    "projectId": "your-project-id"
+  }
+}
+```
 
-## Contributing
+#### GitHub Copilot
+```json
+{
+  "ai": {
+    "provider": "github-copilot",
+    "githubToken": "ghp_...",
+    "model": "gpt-4",
+    "copilotAccessMethod": "auto"
+  }
+}
+```
 
-Contributions are welcome! Please read our contributing guidelines and submit PRs to our GitHub repository.
+#### xAI Grok
+```json
+{
+  "ai": {
+    "provider": "grok",
+    "apiKey": "xai-...",
+    "model": "grok-3-beta",
+    "enableSearch": true,
+    "reasoningEffort": "medium"
+  }
+}
+```
 
-## License
+#### Ollama (Local)
+```json
+{
+  "ai": {
+    "provider": "ollama",
+    "model": "llama3.2",
+    "baseURL": "http://localhost:11434"
+  }
+}
+```
 
-MIT
+#### LiteLLM Proxy
+```json
+{
+  "ai": {
+    "provider": "litellm",
+    "model": "openai/gpt-4o-mini",
+    "baseURL": "http://localhost:4000",
+    "apiKey": "optional"
+  }
+}
+```
 
-## Support
+### Git Integration
 
-For issues, questions, or feature requests, please open an issue on our [GitHub repository](https://github.com/yourusername/doc-delta).#   d o c d e l t a  
- 
+```json
+{
+  "git": {
+    "enabled": true,
+    "autoPush": false,
+    "remote": "origin",
+    "branch": "main",
+    "commitPrefix": "docs:"
+  }
+}
+```
+
+### Metadata & Caching
+
+```json
+{
+  "metadata": {
+    "dir": ".docdelta",
+    "enableCache": true,
+    "cacheDir": ".docdelta/cache"
+  }
+}
+```
+
+## 🛠️ CLI Commands
+
+### Generate Documentation
+```bash
+docdelta generate [options]
+
+Options:
+  -c, --config <file>     Config file path (default: docdelta.config.json)
+  -w, --watch             Watch for changes and regenerate
+  -i, --include <pattern> Include files matching pattern
+  -e, --exclude <pattern> Exclude files matching pattern
+  --force                 Force regeneration of all files
+  --no-git                Disable git operations
+```
+
+### Initialize Project
+```bash
+docdelta init [options]
+
+Options:
+  --provider <provider>   AI provider (openai, anthropic, etc.)
+  --model <model>        AI model to use
+  --output <dir>         Output directory
+```
+
+### List Providers & Models
+```bash
+docdelta providers                 # List available providers
+docdelta models --provider openai  # List models for provider
+```
+
+### Token Usage Tracking
+```bash
+docdelta usage                     # Show usage statistics
+docdelta usage --days 7           # Show last 7 days
+docdelta usage --provider openai   # Filter by provider
+docdelta usage --export           # Export usage data to JSON
+docdelta usage --clear            # Clear all usage history
+docdelta usage --clear 30         # Clear records older than 30 days
+```
+
+### Validate Configuration
+```bash
+docdelta validate                  # Validate config and AI connection
+```
+
+## 📁 Output Structure
+
+```
+docs/
+├── README.md                   # Project overview
+├── api/                        # API documentation
+│   ├── functions.md
+│   ├── classes.md
+│   └── interfaces.md
+├── architecture/               # High-level documentation
+│   ├── overview.md
+│   ├── dependencies.md
+│   └── diagrams/
+├── modules/                    # Module-specific docs
+│   ├── auth/
+│   ├── database/
+│   └── utils/
+└── .metadata/                  # DocDelta metadata
+    ├── chunks.json
+    ├── dependencies.json
+    └── cache/
+```
+
+## 🔍 Code Analysis Features
+
+### Supported Code Elements
+
+- **Functions/Methods**: Parameters, return types, documentation
+- **Classes**: Properties, methods, inheritance
+- **Interfaces/Types**: Structure and relationships
+- **Variables/Constants**: Type information and usage
+- **Imports/Exports**: Dependency mapping
+- **Database Schemas**: Tables, columns, relationships
+
+### Analysis Types
+
+```typescript
+// Function analysis
+export async function authenticateUser(
+  credentials: UserCredentials
+): Promise<AuthResult> {
+  // Implementation
+}
+
+// Class analysis
+export class UserService {
+  private db: Database;
+
+  async createUser(data: CreateUserData): Promise<User> {
+    // Implementation
+  }
+}
+
+// Interface analysis
+export interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: Date;
+}
+```
+
+## 🎨 Customization
+
+### Custom Templates
+
+Create custom documentation templates:
+
+```typescript
+// templates/function.md.hbs
+# {{name}}
+
+**Description**: {{description}}
+
+**Parameters**:
+{{#each parameters}}
+- `{{name}}`: {{type}} - {{description}}
+{{/each}}
+
+**Returns**: {{returnType}}
+
+**Usage**:
+```typescript
+{{example}}
+```
+```
+
+### Custom Providers
+
+Extend DocDelta with custom AI providers:
+
+```typescript
+import { BaseAIProvider, AIResponse } from 'docdelta';
+
+export class CustomProvider extends BaseAIProvider {
+  async generateText(prompt: string): Promise<AIResponse> {
+    // Custom implementation
+  }
+}
+```
+
+## 🔧 Advanced Usage
+
+### Token Usage Tracking & Analytics
+
+DocDelta automatically tracks token usage and costs for all AI providers with a built-in SQLite database:
+
+#### Features
+- **Automatic Tracking**: All AI calls are tracked automatically
+- **Cost Estimation**: Real-time cost calculations for all providers
+- **Usage Analytics**: Detailed breakdowns by provider, model, and operation
+- **Historical Data**: Complete usage history with timestamps
+- **Export/Import**: JSON export for external analysis
+- **Privacy First**: All data stored locally in `~/.docdelta/usage.db`
+
+#### Usage Statistics
+```bash
+# View comprehensive usage statistics
+docdelta usage
+
+# Output example:
+📊 Token Usage Statistics (Last 30 days)
+
+📈 Overview:
+  Total Tokens: 125,847
+  Estimated Cost: $12.45
+  Sessions: 23
+  Last Usage: 12/24/2025, 3:45:20 PM
+
+🤖 By Provider:
+  openai: 89,234 tokens
+  anthropic: 36,613 tokens
+
+🎯 By Model:
+  gpt-4o-mini: 67,891 tokens
+  claude-3-5-sonnet: 36,613 tokens
+  gpt-4: 21,343 tokens
+
+⚡ By Operation:
+  generateText: 156 calls
+  analyzeCode: 89 calls
+  summarize: 34 calls
+```
+
+#### Data Export
+```bash
+# Export usage data for analysis
+docdelta usage --export
+# Creates: docdelta-usage-2025-09-24.json
+
+# Example export structure:
+{
+  "exportDate": "2025-09-24T10:30:00Z",
+  "statistics": { ... },
+  "usageHistory": [
+    {
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "tokensUsed": 150,
+      "cost": 0.000375,
+      "operation": "generateText",
+      "timestamp": "2025-09-24T10:25:00Z"
+    }
+  ]
+}
+```
+
+### Programmatic API
+
+```typescript
+import { DocDelta } from 'docdelta';
+
+const docDelta = new DocDelta({
+  sourceDir: './src',
+  outputDir: './docs',
+  ai: {
+    provider: 'openai',
+    apiKey: process.env.OPENAI_API_KEY
+  }
+});
+
+// Generate documentation
+await docDelta.generate();
+
+// Parse specific files
+const chunks = await docDelta.parseFile('./src/index.ts');
+
+// Get dependency graph
+const dependencies = await docDelta.analyzeDependencies();
+```
+
+### Batch Processing
+
+```typescript
+import { DocDeltaManager } from 'docdelta';
+
+const manager = new DocDeltaManager();
+
+// Process multiple projects
+await manager.processProjects([
+  { name: 'frontend', path: './frontend' },
+  { name: 'backend', path: './backend' },
+  { name: 'shared', path: './shared' }
+]);
+```
+
+### Custom Analysis
+
+```typescript
+import { TypeScriptParser } from 'docdelta/parsers';
+
+const parser = new TypeScriptParser();
+const chunks = await parser.parse('./src/app.ts', sourceCode);
+
+// Filter specific chunk types
+const functions = chunks.filter(chunk => chunk.type === 'function');
+const classes = chunks.filter(chunk => chunk.type === 'class');
+```
+
+## 🧪 Testing
+
+DocDelta includes comprehensive test coverage:
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test suites
+npm test -- --testPathPattern=parser
+npm test -- --testPathPattern=providers
+npm test -- --testPathPattern=generator
+
+# Run with coverage
+npm test -- --coverage
+```
+
+## 🛡️ Environment Variables
+
+```bash
+# AI Provider API Keys
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_AI_API_KEY=AIza...
+XAI_API_KEY=xai-...
+GITHUB_TOKEN=ghp_...
+
+# Optional Configuration
+DOCDELTA_CONFIG=./custom-config.json
+DOCDELTA_OUTPUT_DIR=./documentation
+DOCDELTA_LOG_LEVEL=debug
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+### Development Setup
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/docdelta.git
+cd docdelta
+
+# Install dependencies
+npm install
+
+# Run development build
+npm run dev
+
+# Run tests
+npm test
+```
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🙋 Support
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/docdelta/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/docdelta/discussions)
+
+## 🗺️ Roadmap
+
+- [ ] **Language Support**: Add PHP, Ruby, C#, Kotlin, Swift
+- [ ] **Output Formats**: PDF, Confluence, Notion integration
+- [ ] **Advanced AI Features**: Code suggestions, automated refactoring
+- [ ] **Team Collaboration**: Multi-user workflows, approval processes
+- [ ] **IDE Integration**: VS Code, JetBrains plugins
+- [ ] **Analytics**: Documentation usage and effectiveness metrics
+
+---
+
+**DocDelta - Intelligent Documentation for Modern Development**

@@ -1,0 +1,10 @@
+export * from './types';
+export { ConfigManager } from './config';
+export { ParserFactory, BaseParser, TypeScriptParser, PythonParser, SQLParser } from './core/parser';
+export { DiffEngine } from './core/diff';
+export { AIService } from './core/ai';
+export { DocumentationGenerator } from './core/generator';
+export { GitService } from './core/git';
+export { MetadataManager } from './core/metadata';
+export { Logger, LogLevel } from './utils/logger';
+export { FileUtils } from './utils/file-utils';
