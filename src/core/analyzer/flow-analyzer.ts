@@ -285,7 +285,65 @@ export class FlowAnalyzer {
     const files = await FileUtils.findFiles(
       this.projectRoot,
       patterns || defaultPatterns,
-      ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**']
+      [
+        // Node.js
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/build/**',
+        '**/coverage/**',
+        '**/.nyc_output/**',
+
+        // Python
+        '**/venv/**',
+        '**/env/**',
+        '**/__pycache__/**',
+        '**/.pytest_cache/**',
+        '**/site-packages/**',
+        '**/.venv/**',
+        '**/virtualenv/**',
+        '**/*.pyc',
+        '**/*.pyo',
+        '**/*.pyd',
+
+        // Version Control
+        '**/.git/**',
+        '**/.svn/**',
+        '**/.hg/**',
+
+        // IDEs and Editors
+        '**/.vscode/**',
+        '**/.idea/**',
+        '**/.vs/**',
+        '**/*.swp',
+        '**/*.swo',
+
+        // OS Generated
+        '**/.DS_Store',
+        '**/Thumbs.db',
+
+        // Cache and temporary
+        '**/.cache/**',
+        '**/tmp/**',
+        '**/temp/**',
+        '**/.tmp/**',
+
+        // Dependencies
+        '**/vendor/**',
+        '**/packages/**',
+        '**/libs/**',
+        '**/third_party/**',
+
+        // Language specific
+        '**/target/**',
+        '**/bin/**',
+        '**/obj/**',
+        '**/gems/**',
+
+        // Logs and databases
+        '**/*.log',
+        '**/*.sqlite',
+        '**/*.db',
+      ]
     );
 
     for (const file of files) {

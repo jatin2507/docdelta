@@ -21,18 +21,64 @@ include:
   - "**/*.{sql,nosql,cypher}"       # Database
   - "**/*.{yaml,yml,json,toml,xml}" # Config Files
 
-# File patterns to exclude
+# File patterns to exclude - Comprehensive exclusion for faster processing
 exclude:
+  # Node.js & Frontend
   - "**/node_modules/**"
   - "**/dist/**"
   - "**/build/**"
-  - "**/target/**"
-  - "**/.git/**"
-  - "**/vendor/**"
-  - "**/__pycache__/**"
   - "**/coverage/**"
+  - "**/.nyc_output/**"
   - "**/.next/**"
   - "**/out/**"
+
+  # Python
+  - "**/venv/**"
+  - "**/env/**"
+  - "**/__pycache__/**"
+  - "**/.pytest_cache/**"
+  - "**/site-packages/**"
+  - "**/.venv/**"
+  - "**/virtualenv/**"
+  - "**/*.pyc"
+
+  # Version Control
+  - "**/.git/**"
+  - "**/.svn/**"
+  - "**/.hg/**"
+
+  # IDEs & Editors
+  - "**/.vscode/**"
+  - "**/.idea/**"
+  - "**/.vs/**"
+  - "**/*.swp"
+  - "**/*~"
+
+  # OS Generated
+  - "**/.DS_Store"
+  - "**/Thumbs.db"
+  - "**/desktop.ini"
+
+  # Cache & Temporary
+  - "**/.cache/**"
+  - "**/tmp/**"
+  - "**/temp/**"
+  - "**/.tmp/**"
+
+  # Dependencies
+  - "**/vendor/**"
+  - "**/packages/**"
+  - "**/libs/**"
+  - "**/third_party/**"
+  - "**/target/**"
+  - "**/bin/**"
+  - "**/obj/**"
+  - "**/gems/**"
+
+  # Logs & Databases
+  - "**/*.log"
+  - "**/*.sqlite"
+  - "**/*.db"
 
 # Languages to process (auto-detected if not specified)
 # ScribeVerse will automatically detect languages in your codebase

@@ -50,7 +50,93 @@ export class ConfigManager {
       sourceDir: process.cwd(),
       outputDir: this.determineOutputDir(),
       include: ['**/*.{js,ts,jsx,tsx,py,go,rs,java,cpp,sql}'],
-      exclude: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**'],
+      exclude: [
+        // Node.js
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/build/**',
+        '**/coverage/**',
+        '**/.nyc_output/**',
+
+        // Python
+        '**/venv/**',
+        '**/env/**',
+        '**/__pycache__/**',
+        '**/.pytest_cache/**',
+        '**/site-packages/**',
+        '**/.venv/**',
+        '**/virtualenv/**',
+        '**/*.pyc',
+        '**/*.pyo',
+        '**/*.pyd',
+        '**/.Python',
+
+        // Version Control
+        '**/.git/**',
+        '**/.svn/**',
+        '**/.hg/**',
+        '**/.bzr/**',
+
+        // IDEs and Editors
+        '**/.vscode/**',
+        '**/.idea/**',
+        '**/.vs/**',
+        '**/*.swp',
+        '**/*.swo',
+        '**/*~',
+
+        // OS Generated
+        '**/.DS_Store',
+        '**/Thumbs.db',
+        '**/desktop.ini',
+
+        // Cache and temporary files
+        '**/.cache/**',
+        '**/tmp/**',
+        '**/temp/**',
+        '**/.tmp/**',
+        '**/.sass-cache/**',
+
+        // Dependencies and packages
+        '**/vendor/**',
+        '**/packages/**',
+        '**/libs/**',
+        '**/third_party/**',
+
+        // Language specific
+        // Java
+        '**/target/**',
+        '**/*.class',
+        '**/*.jar',
+
+        // C#
+        '**/bin/**',
+        '**/obj/**',
+
+        // Rust
+        '**/target/**',
+
+        // Go
+        '**/vendor/**',
+
+        // Ruby
+        '**/gems/**',
+
+        // PHP
+        '**/vendor/**',
+
+        // Logs and databases
+        '**/*.log',
+        '**/*.sqlite',
+        '**/*.db',
+
+        // Configuration and secrets
+        '**/.env',
+        '**/.env.local',
+        '**/.env.*.local',
+        '**/config/secrets.yml',
+        '**/config/database.yml',
+      ],
       languages: [
         Language.JAVASCRIPT,
         Language.TYPESCRIPT,

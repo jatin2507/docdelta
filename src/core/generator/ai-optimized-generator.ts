@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { ProjectFlow, FileNode } from '../../core/analyzer/flow-analyzer';
 import { ParsedModule } from '../../types';
+import { AIService } from '../ai';
 
 export interface AIOptimizedDoc {
   projectOverview: ProjectOverviewSection;
@@ -55,6 +56,7 @@ interface FileDocSection {
   usedBy: string[];
   criticalFor: string[];
   codeSnippets: CodeSnippet[];
+  functionFlowDiagram?: string;
 }
 
 interface FileDependency {
@@ -273,9 +275,11 @@ interface CodeSnippet {
 
 export class AIOptimizedDocGenerator {
   private outputDir: string;
+  private aiService: AIService;
 
-  constructor(outputDir?: string) {
+  constructor(outputDir?: string, aiService?: AIService) {
     this.outputDir = outputDir || path.join(process.cwd(), 'docs-ai');
+    this.aiService = aiService || new AIService();
   }
 
   async generateStructuredDocs(
@@ -550,6 +554,7 @@ export class AIOptimizedDocGenerator {
         usedBy: node.dependents.map(d => d.relativePath),
         criticalFor: this.identifyCriticalDependents(node),
         codeSnippets: this.extractKeySnippets(module),
+        functionFlowDiagram: await this.generateFunctionFlowDiagram(module, node),
       };
 
       docs.push(doc);
@@ -626,6 +631,36 @@ export class AIOptimizedDocGenerator {
     });
 
     return snippets;
+  }
+
+  private async generateFunctionFlowDiagram(module: ParsedModule, node: FileNode): Promise<string> {
+    try {
+      // Get function chunks from the module
+      const functionChunks = module.chunks.filter(
+        c => c.type === 'function' || c.type === 'method'
+      );
+
+      if (functionChunks.length === 0) {
+        return '';
+      }
+
+      // Find entry point function (exported functions or main function)
+      const entryFunction = functionChunks.find(c =>
+        module.exports.includes(c.metadata?.name || '') ||
+        c.metadata?.name === 'main' ||
+        c.metadata?.name === 'index'
+      );
+
+      const entryPoint = entryFunction?.metadata?.name;
+
+      // Generate the flow diagram using AI service
+      const diagram = await this.aiService.generateFunctionFlowDiagram(functionChunks, entryPoint);
+
+      return diagram;
+    } catch (error) {
+      console.error(`Failed to generate function flow diagram for ${node.relativePath}:`, error);
+      return '';
+    }
   }
 
   private async generateDependencySection(flow: ProjectFlow): Promise<DependencySection> {
@@ -1093,6 +1128,12 @@ export class AIOptimizedDocGenerator {
       doc.usedBy.forEach(file => {
         sections.push(`- ${file}`);
       });
+    }
+
+    if (doc.functionFlowDiagram) {
+      sections.push(`\n## Function Call Flow\n`);
+      sections.push(`\`\`\`mermaid\n${doc.functionFlowDiagram}\n\`\`\`\n`);
+      sections.push(`*This diagram shows the function call relationships within this file.*`);
     }
 
     return sections.join('\n');
