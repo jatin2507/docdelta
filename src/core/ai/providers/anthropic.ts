@@ -25,7 +25,8 @@ export class AnthropicProvider extends BaseAIProvider {
     try {
       await this.initialize();
       // Try a minimal request to validate the API key
-      await this.client!.messages.create({
+      if (!this.client) throw new Error('Anthropic client not initialized');
+      await this.client.messages.create({
         model: 'claude-3-haiku-20240307',
         max_tokens: 10,
         messages: [{ role: 'user', content: 'test' }],
@@ -60,7 +61,8 @@ export class AnthropicProvider extends BaseAIProvider {
     if (!this.client) await this.initialize();
 
     const response = await this.retry(async () => {
-      const message = await this.client!.messages.create({
+      if (!this.client) throw new Error('Anthropic client not initialized');
+      const message = await this.client.messages.create({
         model: this.config.model || 'claude-3-5-sonnet-20241022',
         max_tokens: this.config.maxTokens || 4096,
         temperature: this.config.temperature,
@@ -81,7 +83,7 @@ export class AnthropicProvider extends BaseAIProvider {
 
     const content = response.content
       .filter(block => block.type === 'text')
-      .map(block => (block as any).text)
+      .map(block => (block as Anthropic.TextBlock).text)
       .join('\n');
 
     return {
@@ -97,7 +99,8 @@ export class AnthropicProvider extends BaseAIProvider {
   async *generateStream(prompt: string, systemPrompt?: string): AsyncGenerator<string> {
     if (!this.client) await this.initialize();
 
-    const stream = await this.client!.messages.create({
+    if (!this.client) throw new Error('Anthropic client not initialized');
+    const stream = await this.client.messages.create({
       model: this.config.model || 'claude-3-5-sonnet-20241022',
       max_tokens: this.config.maxTokens || 4096,
       temperature: this.config.temperature,

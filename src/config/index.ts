@@ -102,12 +102,16 @@ export class ConfigManager {
         ...fileConfig.ai,
       },
       git: {
-        ...defaultConfig.git!,
-        ...fileConfig.git,
+        enabled: defaultConfig.git?.enabled ?? true,
+        autoPush: fileConfig.git?.autoPush ?? defaultConfig.git?.autoPush,
+        remote: fileConfig.git?.remote ?? defaultConfig.git?.remote,
+        branch: fileConfig.git?.branch ?? defaultConfig.git?.branch,
+        commitPrefix: fileConfig.git?.commitPrefix ?? defaultConfig.git?.commitPrefix,
       },
       metadata: {
-        ...defaultConfig.metadata!,
-        ...fileConfig.metadata,
+        dir: fileConfig.metadata?.dir ?? defaultConfig.metadata?.dir ?? '.metadata',
+        cacheDir: fileConfig.metadata?.cacheDir ?? defaultConfig.metadata?.cacheDir,
+        enableCache: fileConfig.metadata?.enableCache ?? defaultConfig.metadata?.enableCache,
       },
     };
   }

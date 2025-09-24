@@ -44,7 +44,7 @@ export interface AIResponse {
   promptTokens?: number;
   completionTokens?: number;
   finishReason?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AIError {
@@ -53,7 +53,7 @@ export interface AIError {
   message: string;
   statusCode?: number;
   retryable: boolean;
-  details?: any;
+  details?: unknown;
 }
 
 export interface SummarizationRequest {
@@ -165,20 +165,22 @@ export abstract class BaseAIProvider implements IAIProvider {
     }
   }
 
-  protected handleError(error: any): AIError {
+  protected handleError(error: unknown): AIError {
+    const errorObj = error as Record<string, unknown>;
     return {
       provider: this.config.provider,
-      code: error.code || 'UNKNOWN_ERROR',
-      message: error.message || 'An unknown error occurred',
-      statusCode: error.statusCode || error.response?.status,
+      code: (errorObj.code as string) || 'UNKNOWN_ERROR',
+      message: (errorObj.message as string) || 'An unknown error occurred',
+      statusCode: (errorObj.statusCode as number) || ((errorObj.response as Record<string, unknown>)?.status as number),
       retryable: this.isRetryableError(error),
-      details: error.response?.data || error,
+      details: ((errorObj.response as Record<string, unknown>)?.data as unknown) || error,
     };
   }
 
-  protected isRetryableError(error: any): boolean {
-    const statusCode = error.statusCode || error.response?.status;
-    return statusCode >= 500 || statusCode === 429 || error.code === 'ECONNRESET';
+  protected isRetryableError(error: unknown): boolean {
+    const errorObj = error as Record<string, unknown>;
+    const statusCode = (errorObj.statusCode as number) || ((errorObj.response as Record<string, unknown>)?.status as number);
+    return statusCode >= 500 || statusCode === 429 || errorObj.code === 'ECONNRESET';
   }
 
   protected async retry<T>(

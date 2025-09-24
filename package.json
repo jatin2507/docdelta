@@ -1,6 +1,7 @@
 {
   "name": "doc-delta",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "Multi-language documentation tool with incremental updates and AI-powered summaries",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
