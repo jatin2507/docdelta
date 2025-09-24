@@ -55,7 +55,17 @@ export class GitService {
 
   async stageFiles(files: string[]): Promise<void> {
     if (files.length === 0) return;
-    await this.git.add(files);
+
+    try {
+      // Normalize Windows paths to use forward slashes for Git
+      const normalizedFiles = files.map(file => file.replace(/\\/g, '/'));
+      console.log(`📝 Staging ${normalizedFiles.length} files for commit...`);
+      await this.git.add(normalizedFiles);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`❌ Failed to stage files: ${errorMessage}`);
+      throw new Error(`Git staging failed: ${errorMessage}`);
+    }
   }
 
   async stageAll(): Promise<void> {

@@ -34,11 +34,13 @@ ScribeVerse is a powerful tool that analyzes your codebase and generates compreh
 
 ## 🔧 **Advanced Features**
 - **Function Flow Diagrams**: Auto-generated Mermaid.js flowcharts showing function call relationships within files
-- **Smart Error Recovery**: Graceful handling of invalid inputs, network failures, and provider errors
+- **Smart Error Recovery**: Graceful handling of invalid inputs, network failures, and provider errors with detailed feedback
 - **AI-Optimized Prompts**: Token-efficient documentation designed specifically for AI comprehension
 - **Comprehensive Validation**: Input sanitization, type checking, and security hardening
 - **Performance Optimized**: Advanced filtering excludes 50+ unnecessary file/folder patterns
 - **🧠 Smart Automation**: Intelligent language detection, auto-commits, and workflow optimization - see [Smart Features Guide](docs/SMART-FEATURES.md)
+- **📈 Streaming Progress**: Real-time progress indicators during generation with step-by-step feedback
+- **🛡️ Robust Error Handling**: Continues processing on failures, provides detailed error reports and suggestions
 
 ## 📦 Installation
 
@@ -90,6 +92,9 @@ scribeverse generate --include "src/**/*.ts"
 
 # Watch mode (regenerate on changes)
 scribeverse generate --watch
+
+# Generate with streaming progress (default)
+scribeverse generate
 ```
 
 ## ⚙️ Configuration
@@ -197,7 +202,7 @@ scribeverse generate --watch
 }
 ```
 
-### Git Integration
+### Git Integration & Smart Commits
 
 ```json
 {
@@ -211,6 +216,30 @@ scribeverse generate --watch
 }
 ```
 
+#### Smart Commit Examples
+
+ScribeVerse automatically generates intelligent commit messages based on the changes made:
+
+```bash
+# Auto-generated commit messages
+scribeverse generate
+# Creates commit: "docs: Update API documentation and add function flow diagrams"
+
+# Smart commit with analysis
+scribeverse smart-commit --add-all
+# Analyzes changes and creates: "feat: Add user authentication module with flow diagrams"
+
+# Manual commit with generated message
+scribeverse commit-docs
+# Generates: "docs: Update module documentation for UserService and AuthController"
+```
+
+**Example Generated Commit Messages:**
+- `docs: Update API documentation for authentication module`
+- `feat: Add function flow diagrams for payment processing`
+- `docs: Update architecture documentation with new dependencies`
+- `refactor: Improve module documentation structure and formatting`
+
 ### Metadata & Caching
 
 ```json
@@ -221,6 +250,45 @@ scribeverse generate --watch
     "cacheDir": ".scribeverse/cache"
   }
 }
+```
+
+## 🛡️ **Error Handling & Recovery**
+
+ScribeVerse includes comprehensive error handling with detailed feedback:
+
+### **Streaming Progress with Error Reporting**
+```bash
+scribeverse generate
+# Output with error handling:
+[1/6] Generating project overview... (17%) ✅
+[2/6] Analyzing architecture... (33%) ✅
+[3/6] Creating API reference... (50%) ✅
+[4/6] Documenting database schemas... (67%) ⚠️  No database files found
+[5/6] Generating module documentation... (83%) ❌ Module auth.js: No extractable code chunks found
+[6/6] Writing documentation files... (100%) ✅
+
+✨ Documentation generation complete!
+  Files processed: 34
+  Chunks analyzed: 128
+  Modules with errors: 3
+
+⚠ Warnings:
+  - Module auth.js: No extractable code chunks found
+  - Module config.js: AI provider timeout, retrying...
+  - Database documentation skipped: No SQL files found
+```
+
+### **Cross-Platform Path Handling**
+- **Windows**: Automatically converts `docs\README.md` to `docs/README.md` for Git
+- **macOS/Linux**: Native path handling without conversion
+- **Error Recovery**: Continues processing if individual files fail
+
+### **AI Provider Error Handling**
+```bash
+# Graceful fallback on provider errors
+[ERROR] OpenAI API rate limit exceeded, retrying in 5s...
+[RETRY] Attempting with exponential backoff...
+[SUCCESS] Documentation generated successfully
 ```
 
 ## 🛠️ CLI Commands
