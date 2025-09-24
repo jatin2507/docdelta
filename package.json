@@ -35,7 +35,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/scribeverse"
+    "url": "https://github.com/jatin2507/scribeverse"
   },
   "engines": {
     "node": ">=18.0.0"

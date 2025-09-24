@@ -516,7 +516,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/scribeverse.git
+git clone https://github.com/jatin2507/scribeverse.git
 cd scribeverse
 
 # Install dependencies
@@ -535,8 +535,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🙋 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/scribeverse/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/scribeverse/discussions)
+- **Issues**: [GitHub Issues](https://github.com/jatin2507/scribeverse/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/jatin2507/scribeverse/discussions)
 
 ## 🗺️ Roadmap
 

@@ -37,7 +37,7 @@ This project adheres to a code of conduct that we expect all contributors to fol
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/your-username/scribeverse.git
+   git clone https://github.com/jatin2507/scribeverse.git
    cd scribeverse
    ```
 
