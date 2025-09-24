@@ -213,13 +213,13 @@ export class ValidationUtils {
   static validApiKey(value: string | null | undefined, fieldName: string): string {
     const apiKey = this.nonEmptyString(value, fieldName);
 
-    // Basic validation - should be at least 10 characters
-    if (apiKey.length < 10) {
-      throw new ValidationError(`${fieldName} appears to be too short`, fieldName);
+    // Basic validation - should be at least 15 characters for real API keys
+    if (apiKey.length < 15) {
+      throw new ValidationError(`${fieldName} appears to be too short (minimum 15 characters)`, fieldName);
     }
 
     // Check for common placeholder values
-    const placeholders = ['your-api-key', 'sk-placeholder', 'enter-your-key'];
+    const placeholders = ['your-api-key', 'sk-placeholder', 'enter-your-key', 'example-key'];
     if (placeholders.some(placeholder => apiKey.toLowerCase().includes(placeholder))) {
       throw new ValidationError(`${fieldName} appears to be a placeholder value`, fieldName);
     }

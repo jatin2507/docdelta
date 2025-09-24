@@ -18,6 +18,7 @@ export class DocumentationGenerator {
   private aiService: AIService;
   private outputDir: string;
   private stats: GenerationStats;
+  private progressCallback?: (step: string, progress: number, total: number) => void;
 
   constructor(config?: DocDeltaConfig) {
     this.config = config || ConfigManager.getInstance().getConfig();
@@ -32,30 +33,50 @@ export class DocumentationGenerator {
     };
   }
 
+  setProgressCallback(callback: (step: string, progress: number, total: number) => void): void {
+    this.progressCallback = callback;
+  }
+
+  private updateProgress(step: string, progress: number, total: number): void {
+    if (this.progressCallback) {
+      this.progressCallback(step, progress, total);
+    }
+  }
+
   async generate(modules: ParsedModule[]): Promise<GenerationResult> {
     const startTime = Date.now();
     const sections: DocumentationSection[] = [];
     const files: GeneratedFile[] = [];
+    const totalSteps = 6; // Overview, Architecture, API, Database, Modules, WriteFiles
+    let currentStep = 0;
 
     await fs.ensureDir(this.outputDir);
 
     try {
+      // Step 1: Generate Overview
+      this.updateProgress('Generating project overview...', ++currentStep, totalSteps);
       const overviewSection = await this.generateOverview(modules);
       sections.push(overviewSection);
       files.push(this.createFile('README.md', overviewSection, DocType.OVERVIEW));
 
+      // Step 2: Generate Architecture
+      this.updateProgress('Analyzing architecture...', ++currentStep, totalSteps);
       const architectureSection = await this.generateArchitecture(modules);
       sections.push(architectureSection);
       files.push(
         this.createFile('docs/architecture.md', architectureSection, DocType.ARCHITECTURE)
       );
 
+      // Step 3: Generate API Reference
+      this.updateProgress('Creating API reference...', ++currentStep, totalSteps);
       const apiDocs = await this.generateAPIReference(modules);
       sections.push(...apiDocs);
       apiDocs.forEach((doc) => {
         files.push(this.createFile(`docs/api/${doc.id}.md`, doc, DocType.API_REFERENCE));
       });
 
+      // Step 4: Generate Database Documentation
+      this.updateProgress('Documenting database schemas...', ++currentStep, totalSteps);
       const databaseDocs = await this.generateDatabaseDocs(modules);
       if (databaseDocs.length > 0) {
         sections.push(...databaseDocs);
@@ -68,6 +89,8 @@ export class DocumentationGenerator {
         );
       }
 
+      // Step 5: Generate Module Documentation
+      this.updateProgress(`Generating module documentation (${modules.length} modules)...`, ++currentStep, totalSteps);
       const moduleDocs = await this.generateModuleDocs(modules);
       sections.push(...moduleDocs);
       moduleDocs.forEach((doc) => {
@@ -75,6 +98,8 @@ export class DocumentationGenerator {
         files.push(this.createFile(`docs/modules/${moduleName}.md`, doc, DocType.MODULE));
       });
 
+      // Step 6: Write Files
+      this.updateProgress(`Writing ${files.length} documentation files...`, ++currentStep, totalSteps);
       await this.writeFiles(files);
 
       this.stats.filesProcessed = modules.length;

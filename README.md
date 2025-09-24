@@ -38,6 +38,7 @@ ScribeVerse is a powerful tool that analyzes your codebase and generates compreh
 - **AI-Optimized Prompts**: Token-efficient documentation designed specifically for AI comprehension
 - **Comprehensive Validation**: Input sanitization, type checking, and security hardening
 - **Performance Optimized**: Advanced filtering excludes 50+ unnecessary file/folder patterns
+- **🧠 Smart Automation**: Intelligent language detection, auto-commits, and workflow optimization - see [Smart Features Guide](docs/SMART-FEATURES.md)
 
 ## 📦 Installation
 

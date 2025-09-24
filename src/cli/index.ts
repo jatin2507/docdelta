@@ -61,6 +61,13 @@ program
 
       spinner.start('Generating documentation...');
       const generator = new DocumentationGenerator();
+
+      // Set up streaming progress callback
+      generator.setProgressCallback((step: string, progress: number, total: number) => {
+        const percentage = Math.round((progress / total) * 100);
+        spinner.text = `[${progress}/${total}] ${step} (${percentage}%)`;
+      });
+
       const result = await generator.generate(modules);
       spinner.succeed(`Generated documentation: ${result.files.length} files created`);
 
@@ -334,7 +341,7 @@ program
     try {
       const config = ConfigManager.getInstance();
       config.saveConfig();
-      spinner.succeed('Created .scribeverse.yml configuration file');
+      spinner.succeed('Created scribeverse.config.json configuration file');
 
       const metadataManager = new MetadataManager();
       await metadataManager.initialize();

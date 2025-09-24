@@ -12,7 +12,7 @@ export class ConfigManager {
   private configPath: string;
 
   private constructor() {
-    this.configPath = path.join(process.cwd(), '.scribeverse.yml');
+    this.configPath = path.join(process.cwd(), 'scribeverse.config.json');
     this.config = this.loadConfig();
   }
 
@@ -145,10 +145,11 @@ export class ConfigManager {
         Language.RUST,
       ],
       ai: {
-        apiKey: process.env.OPENAI_API_KEY || '',
-        model: process.env.AI_MODEL || 'gpt-4-turbo-preview',
-        maxTokens: parseInt(process.env.MAX_TOKENS || '2000', 10),
-        temperature: parseFloat(process.env.AI_TEMPERATURE || '0.7'),
+        provider: process.env.AI_PROVIDER || 'openai',
+        apiKey: process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || process.env.GOOGLE_AI_API_KEY || '',
+        model: process.env.AI_MODEL || 'gpt-4o-mini',
+        maxTokens: parseInt(process.env.MAX_TOKENS || '4000', 10),
+        temperature: parseFloat(process.env.AI_TEMPERATURE || '0.2'),
       },
       git: {
         enabled: process.env.ENABLE_GIT !== 'false',
@@ -166,10 +167,26 @@ export class ConfigManager {
 
     if (fs.existsSync(this.configPath)) {
       try {
-        const fileConfig = yaml.parse(fs.readFileSync(this.configPath, 'utf8'));
+        const fileConfig = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
         return this.mergeConfigs(defaultConfig, fileConfig);
       } catch (error) {
         console.warn(`Failed to parse config file: ${error}`);
+      }
+    }
+
+    // Also check for legacy YAML config and migrate it
+    const legacyConfigPath = path.join(process.cwd(), '.scribeverse.yml');
+    if (fs.existsSync(legacyConfigPath)) {
+      try {
+        const fileConfig = yaml.parse(fs.readFileSync(legacyConfigPath, 'utf8'));
+        console.log('Migrating legacy YAML config to JSON...');
+        const mergedConfig = this.mergeConfigs(defaultConfig, fileConfig);
+        // Save as JSON and remove YAML
+        fs.writeFileSync(this.configPath, JSON.stringify(mergedConfig, null, 2), 'utf8');
+        fs.unlinkSync(legacyConfigPath);
+        return mergedConfig;
+      } catch (error) {
+        console.warn(`Failed to migrate legacy config file: ${error}`);
       }
     }
 
@@ -211,14 +228,36 @@ export class ConfigManager {
   }
 
   saveConfig(): void {
-    fs.writeFileSync(this.configPath, yaml.stringify(this.config), 'utf8');
+    fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2), 'utf8');
   }
 
   validateConfig(): string[] {
     const errors: string[] = [];
 
     if (!this.config.ai.apiKey) {
-      errors.push('OpenAI API key is required. Set OPENAI_API_KEY environment variable.');
+      const provider = this.config.ai.provider || 'openai';
+      switch (provider.toLowerCase()) {
+        case 'openai':
+          errors.push('OpenAI API key is required. Set OPENAI_API_KEY environment variable or add it to your config file.');
+          break;
+        case 'anthropic':
+          errors.push('Anthropic API key is required. Set ANTHROPIC_API_KEY environment variable or add it to your config file.');
+          break;
+        case 'google-gemini':
+          errors.push('Google Gemini API key is required. Set GOOGLE_AI_API_KEY environment variable or add it to your config file.');
+          break;
+        case 'github-copilot':
+          errors.push('GitHub token is required. Set GITHUB_TOKEN environment variable or add it to your config file.');
+          break;
+        case 'grok':
+          errors.push('xAI API key is required. Set XAI_API_KEY environment variable or add it to your config file.');
+          break;
+        case 'ollama':
+          // Ollama usually doesn't require API key for local usage
+          break;
+        default:
+          errors.push(`AI API key is required for provider: ${provider}. Please add it to your config file.`);
+      }
     }
 
     if (!fs.existsSync(this.config.sourceDir)) {

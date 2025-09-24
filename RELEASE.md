@@ -7,29 +7,77 @@
 
 ### 🎉 What's New
 
+#### 🔧 **Fixed Init Command - JSON Configuration**
+- **Fixed**: `scribeverse init` now generates `scribeverse.config.json` instead of YAML
+- **Added**: Automatic migration from legacy `.scribeverse.yml` to JSON format
+- **Enhanced**: Modern AI provider configuration structure
+- **Improved**: Better default values for AI models and settings
+
+#### ⚡ **Streaming Progress for Documentation Generation**
+- **Added**: Real-time progress indicators during documentation generation
+- **Enhanced**: Step-by-step progress with percentages `[3/6] Creating API reference... (50%)`
+- **Improved**: Users can now see exactly what's happening during generation
+- **Better UX**: No more waiting without feedback during long operations
+
+#### 🧠 **Enhanced AI Integration & Configuration**
+- **Fixed**: AI model integration now works correctly with proper validation
+- **Enhanced**: Better error messages for missing API keys per provider
+- **Added**: Support for multiple AI provider environment variables
+- **Updated**: Default model changed to `gpt-4o-mini` for better performance/cost ratio
+- **Improved**: More realistic API key validation (15+ characters minimum)
+
+#### 📚 **Documentation Updates**
+- **Added**: Reference to Smart Features Guide (`docs/SMART-FEATURES.md`)
+- **Enhanced**: Better visibility of intelligent automation features
+- **Updated**: Configuration examples match actual JSON output
+- **Improved**: Clear setup instructions for all AI providers
+
+#### 🛠️ **Technical Improvements**
+- **Enhanced**: Comprehensive input validation with better error messages
+- **Added**: Progress callback system in DocumentationGenerator
+- **Improved**: Cross-platform file path handling
+- **Fixed**: Console output cleanup during tests (no more spam in publish logs)
+
 #### ✨ **Function Flow Diagrams**
 - Auto-generated Mermaid.js flowcharts showing function call relationships
 - Visual representation of code dependencies and execution flow
 - Support for multiple programming languages
 - Interactive diagrams in HTML output
 
-#### 🧠 **Enhanced AI Integration**
+#### 🧠 **AI Provider Support**
 - **7 AI Providers**: OpenAI, Anthropic, Google Gemini, GitHub Copilot, xAI Grok, Ollama, LiteLLM
-- **50+ AI Models**: Support for latest GPT-4, Claude 3.5, Gemini 2.0, and more
+- **50+ AI Models**: Support for latest GPT-4o, Claude 3.5, Gemini 2.0, and more
 - **Smart Error Recovery**: Graceful handling of AI provider failures
 - **Token Optimization**: Efficient prompt engineering for cost reduction
 
-#### ⚡ **Performance Improvements**
-- **Advanced File Filtering**: Intelligent exclusion of unnecessary files
-- **Incremental Processing**: Only analyze changed files
-- **Memory Optimization**: Efficient resource management
-- **Parallel Processing**: Faster documentation generation
+### 🐛 **Bug Fixes**
 
-#### 🔧 **Developer Experience**
-- **Comprehensive Validation**: Input sanitization and type checking
-- **Better Error Messages**: Clear, actionable error reporting
-- **Watch Mode**: Real-time documentation updates during development
-- **CI/CD Integration**: Seamless pipeline integration
+#### **Configuration Issues**
+- **Fixed**: Init command generating YAML instead of JSON configuration
+- **Fixed**: Environment variable loading for AI provider API keys
+- **Fixed**: Config validation not recognizing valid API keys from environment
+- **Fixed**: Legacy config migration causing startup errors
+
+#### **Documentation Generation**
+- **Fixed**: AI service initialization errors with proper API keys
+- **Fixed**: Streaming progress not showing during long operations
+- **Fixed**: Parser not extracting chunks from valid JavaScript/TypeScript files
+- **Fixed**: Error handling showing cryptic messages instead of helpful guidance
+
+#### **Development Experience**
+- **Fixed**: Console spam during test runs cluttering npm publish output
+- **Fixed**: TypeScript compilation warnings in validation utilities
+- **Fixed**: ESLint warnings in error handling modules
+- **Fixed**: Cross-platform path resolution issues on Windows
+
+### 🔄 **Breaking Changes**
+
+**None** - This release maintains full backward compatibility while fixing critical issues.
+
+**Migration Notes:**
+- Legacy `.scribeverse.yml` files are automatically migrated to `scribeverse.config.json`
+- All existing workflows continue to work without changes
+- Environment variable names remain the same
 
 ### 🛠️ **Technical Enhancements**
 
