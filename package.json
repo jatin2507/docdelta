@@ -1,12 +1,12 @@
 {
-  "name": "doc-delta",
+  "name": "scribeverse",
   "version": "1.0.0",
   "type": "commonjs",
   "description": "Multi-language documentation tool with incremental updates and AI-powered summaries",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "docdelta": "./dist/cli/index.js"
+    "scribeverse": "./dist/cli/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -35,7 +35,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/doc-delta"
+    "url": "https://github.com/yourusername/scribeverse"
   },
   "engines": {
     "node": ">=18.0.0"

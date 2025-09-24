@@ -1,6 +1,6 @@
-# DocDelta Documentation
+# ScribeVerse Documentation
 
-Welcome to the comprehensive documentation for DocDelta - the AI-powered documentation generation tool.
+Welcome to the comprehensive documentation for ScribeVerse - the AI-powered documentation generation tool.
 
 ## Documentation Structure
 
@@ -14,13 +14,13 @@ Welcome to the comprehensive documentation for DocDelta - the AI-powered documen
 
 ### 🚀 Getting Started
 
-1. **[Installation & Setup](../README.md#installation)** - Get DocDelta running quickly
+1. **[Installation & Setup](../README.md#installation)** - Get ScribeVerse running quickly
 2. **[Provider Configuration](./PROVIDERS.md#quick-setup)** - Configure your AI provider
 3. **[Basic Usage Examples](./EXAMPLES.md#basic-usage)** - Start generating documentation
 
 ### 🎯 AI Providers
 
-DocDelta supports 7 major AI providers with 50+ models:
+ScribeVerse supports 7 major AI providers with 50+ models:
 
 | Provider | Documentation | Best For |
 |----------|---------------|----------|
@@ -34,7 +34,7 @@ DocDelta supports 7 major AI providers with 50+ models:
 
 ### 🔧 API Reference
 
-- **[Core Classes](./API.md#core-classes)** - DocDelta, DocDeltaManager
+- **[Core Classes](./API.md#core-classes)** - ScribeVerse, ScribeVerseManager
 - **[Parser API](./API.md#parser-api)** - Language parsers and factory
 - **[AI Provider API](./API.md#ai-provider-api)** - Provider interfaces and manager
 - **[Generator API](./API.md#generator-api)** - Documentation generation
@@ -53,7 +53,7 @@ DocDelta supports 7 major AI providers with 50+ models:
 - **[Development Setup](../CONTRIBUTING.md#development-setup)** - Local development environment
 - **[Project Structure](../CONTRIBUTING.md#project-structure)** - Codebase organization
 - **[Testing](../CONTRIBUTING.md#testing)** - Test structure and guidelines
-- **[Contributing](../CONTRIBUTING.md)** - How to contribute to DocDelta
+- **[Contributing](../CONTRIBUTING.md)** - How to contribute to ScribeVerse
 
 ## Quick Navigation
 
@@ -65,10 +65,10 @@ DocDelta supports 7 major AI providers with 50+ models:
 **⚙️ I need to configure an AI provider**
 → [Provider Configuration](./PROVIDERS.md#provider-specific-configuration)
 
-**💻 I want to use DocDelta programmatically**
+**💻 I want to use ScribeVerse programmatically**
 → [API Reference](./API.md#core-classes) + [Programmatic Examples](./EXAMPLES.md#programmatic-usage)
 
-**🔧 I want to extend DocDelta**
+**🔧 I want to extend ScribeVerse**
 → [Contributing Guide](../CONTRIBUTING.md#adding-new-features)
 
 **❓ I need help troubleshooting**
@@ -86,7 +86,7 @@ DocDelta supports 7 major AI providers with 50+ models:
 
 ### By Language
 
-DocDelta supports parsing and documentation for:
+ScribeVerse supports parsing and documentation for:
 
 - **TypeScript/JavaScript** - Full AST parsing, dependency analysis
 - **Python** - Functions, classes, modules, type hints
@@ -121,14 +121,14 @@ DocDelta supports parsing and documentation for:
 
 ### Development Workflow
 ```bash
-# 1. Set up DocDelta in your project
-docdelta init --provider openai
+# 1. Set up ScribeVerse in your project
+scribeverse init --provider openai
 
 # 2. Generate initial documentation
-docdelta generate
+scribeverse generate
 
 # 3. Set up watch mode for development
-docdelta generate --watch
+scribeverse generate --watch
 
 # 4. Commit documentation changes
 git add docs/
@@ -139,7 +139,7 @@ git commit -m "docs: update API documentation"
 ```yaml
 - name: Generate Documentation
   run: |
-    docdelta generate --no-git
+    scribeverse generate --no-git
 
 - name: Deploy Documentation
   uses: peaceiris/actions-gh-pages@v3
@@ -181,7 +181,7 @@ git commit -m "docs: update API documentation"
 ## What's Next?
 
 ### Immediate Actions
-1. **[Install DocDelta](../README.md#installation)** and try the quick start
+1. **[Install ScribeVerse](../README.md#installation)** and try the quick start
 2. **[Configure your AI provider](./PROVIDERS.md)** of choice
 3. **[Generate your first documentation](../README.md#quick-start)**
 
@@ -199,4 +199,4 @@ git commit -m "docs: update API documentation"
 
 **Happy Documenting! 🎉**
 
-*DocDelta makes documentation generation intelligent, efficient, and enjoyable.*
+*ScribeVerse makes documentation generation intelligent, efficient, and enjoyable.*

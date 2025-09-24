@@ -18,7 +18,7 @@ export class MetadataManager {
     );
     this.cacheDir = path.join(
       process.cwd(),
-      this.config.metadata?.cacheDir || '.docdelta-cache'
+      this.config.metadata?.cacheDir || '.scribeverse-cache'
     );
   }
 

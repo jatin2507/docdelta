@@ -1,6 +1,6 @@
-# DocDelta Usage Examples
+# ScribeVerse Usage Examples
 
-This document provides practical examples for using DocDelta in various scenarios.
+This document provides practical examples for using ScribeVerse in various scenarios.
 
 ## Table of Contents
 
@@ -16,20 +16,20 @@ This document provides practical examples for using DocDelta in various scenario
 ### 1. Quick Start
 
 ```bash
-# Initialize DocDelta in your project
+# Initialize ScribeVerse in your project
 cd my-project
-docdelta init
+scribeverse init
 
 # Set your AI provider credentials
 export OPENAI_API_KEY="sk-your-api-key-here"
 
 # Generate documentation
-docdelta generate
+scribeverse generate
 ```
 
 ### 2. Minimal Configuration
 
-Create `docdelta.config.json`:
+Create `scribeverse.config.json`:
 
 ```json
 {
@@ -45,20 +45,20 @@ Create `docdelta.config.json`:
 Generate documentation:
 
 ```bash
-docdelta generate
+scribeverse generate
 ```
 
 ### 3. Specific File Patterns
 
 ```bash
 # Document only TypeScript files
-docdelta generate --include "**/*.ts" --exclude "**/*.test.ts"
+scribeverse generate --include "**/*.ts" --exclude "**/*.test.ts"
 
 # Document Python modules
-docdelta generate --include "src/**/*.py" --exclude "**/test_*.py"
+scribeverse generate --include "src/**/*.py" --exclude "**/test_*.py"
 
 # Document SQL schemas
-docdelta generate --include "database/**/*.sql"
+scribeverse generate --include "database/**/*.sql"
 ```
 
 ## Configuration Examples
@@ -127,7 +127,7 @@ docdelta generate --include "database/**/*.sql"
   },
   "metadata": {
     "enableCache": true,
-    "cacheDir": ".docdelta/cache"
+    "cacheDir": ".scribeverse/cache"
   }
 }
 ```
@@ -159,38 +159,38 @@ docdelta generate --include "database/**/*.sql"
 
 ```bash
 # Initialize with specific provider
-docdelta init --provider anthropic --model claude-3-5-sonnet-20241022
+scribeverse init --provider anthropic --model claude-3-5-sonnet-20241022
 
 # Generate with custom output directory
-docdelta generate --output ./documentation
+scribeverse generate --output ./documentation
 
 # Force regeneration of all files
-docdelta generate --force
+scribeverse generate --force
 
 # Watch mode for development
-docdelta generate --watch
+scribeverse generate --watch
 ```
 
 ### Advanced CLI Usage
 
 ```bash
 # List available providers
-docdelta providers
+scribeverse providers
 
 # List models for specific provider
-docdelta models --provider openai
+scribeverse models --provider openai
 
 # Validate configuration
-docdelta validate
+scribeverse validate
 
 # Generate with specific configuration file
-docdelta generate --config ./custom-docdelta.config.json
+scribeverse generate --config ./custom-scribeverse.config.json
 
 # Disable git integration
-docdelta generate --no-git
+scribeverse generate --no-git
 
 # Include/exclude specific patterns
-docdelta generate \
+scribeverse generate \
   --include "src/**/*.ts" \
   --include "lib/**/*.js" \
   --exclude "**/*.test.*"
@@ -200,14 +200,14 @@ docdelta generate \
 
 ```bash
 # Development environment
-export DOCDELTA_CONFIG=./configs/dev.docdelta.config.json
+export DOCDELTA_CONFIG=./configs/dev.scribeverse.config.json
 export DOCDELTA_LOG_LEVEL=debug
-docdelta generate
+scribeverse generate
 
 # Production environment
-export DOCDELTA_CONFIG=./configs/prod.docdelta.config.json
+export DOCDELTA_CONFIG=./configs/prod.scribeverse.config.json
 export DOCDELTA_LOG_LEVEL=error
-docdelta generate --no-git
+scribeverse generate --no-git
 ```
 
 ## Programmatic Usage
@@ -215,9 +215,9 @@ docdelta generate --no-git
 ### Basic API Usage
 
 ```typescript
-import { DocDelta } from 'docdelta';
+import { ScribeVerse } from 'scribeverse';
 
-const docDelta = new DocDelta({
+const docDelta = new ScribeVerse({
   sourceDir: './src',
   outputDir: './docs',
   ai: {
@@ -250,7 +250,7 @@ generateDocs();
 ### Custom Parser Integration
 
 ```typescript
-import { DocDelta, ParserFactory, Language } from 'docdelta';
+import { ScribeVerse, ParserFactory, Language } from 'scribeverse';
 
 // Register custom parser for a new language
 class RustParser extends BaseParser {
@@ -315,7 +315,7 @@ class RustParser extends BaseParser {
 // Register the custom parser
 ParserFactory.registerParser(Language.RUST, RustParser);
 
-const docDelta = new DocDelta({
+const docDelta = new ScribeVerse({
   sourceDir: './src',
   outputDir: './docs',
   include: ['**/*.rs'],
@@ -330,7 +330,7 @@ const docDelta = new DocDelta({
 ### Multi-Provider Setup
 
 ```typescript
-import { AIProviderManager } from 'docdelta';
+import { AIProviderManager } from 'scribeverse';
 
 const manager = new AIProviderManager({
   providers: [
@@ -380,7 +380,7 @@ const codeReview = await manager.analyzeCode({
 ### Custom Template Engine
 
 ```typescript
-import { TemplateEngine } from 'docdelta';
+import { TemplateEngine } from 'scribeverse';
 
 const templateEngine = new TemplateEngine();
 
@@ -438,15 +438,15 @@ const documentation = templateEngine.render('function-detailed', {
 ### Incremental Documentation Updates
 
 ```typescript
-import { MetadataManager, FileUtils } from 'docdelta';
+import { MetadataManager, FileUtils } from 'scribeverse';
 
 class IncrementalDocGenerator {
   private metadataManager: MetadataManager;
-  private docDelta: DocDelta;
+  private docDelta: ScribeVerse;
 
-  constructor(config: DocDeltaConfig) {
+  constructor(config: ScribeVerseConfig) {
     this.metadataManager = new MetadataManager(config.metadata);
-    this.docDelta = new DocDelta(config);
+    this.docDelta = new ScribeVerse(config);
   }
 
   async generateIncremental(): Promise<void> {
@@ -513,25 +513,25 @@ class IncrementalDocGenerator {
 ### Multi-Project Documentation
 
 ```typescript
-import { DocDeltaManager } from 'docdelta';
+import { ScribeVerseManager } from 'scribeverse';
 
 interface ProjectConfig {
   name: string;
   path: string;
-  config: DocDeltaConfig;
+  config: ScribeVerseConfig;
 }
 
 class MultiProjectDocGenerator {
-  private projects: Map<string, DocDelta> = new Map();
+  private projects: Map<string, ScribeVerse> = new Map();
 
-  async addProject(name: string, path: string, config: Partial<DocDeltaConfig> = {}): Promise<void> {
-    const fullConfig: DocDeltaConfig = {
+  async addProject(name: string, path: string, config: Partial<ScribeVerseConfig> = {}): Promise<void> {
+    const fullConfig: ScribeVerseConfig = {
       sourceDir: `${path}/src`,
       outputDir: `${path}/docs`,
       ...config
     };
 
-    const docDelta = new DocDelta(fullConfig);
+    const docDelta = new ScribeVerse(fullConfig);
     await docDelta.validateConfig();
 
     this.projects.set(name, docDelta);
@@ -620,7 +620,7 @@ console.log(summary);
 ### Custom AI Provider
 
 ```typescript
-import { BaseAIProvider, AIProvider, AIProviderConfig, AIResponse } from 'docdelta';
+import { BaseAIProvider, AIProvider, AIProviderConfig, AIResponse } from 'scribeverse';
 
 class CustomAIProvider extends BaseAIProvider {
   private apiEndpoint: string;
@@ -787,7 +787,7 @@ const customProvider = new CustomAIProvider({
   model: 'custom-model-v1'
 });
 
-const docDelta = new DocDelta({
+const docDelta = new ScribeVerse({
   sourceDir: './src',
   outputDir: './docs',
   ai: {
@@ -826,14 +826,14 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Install DocDelta
-      run: npm install -g docdelta
+    - name: Install ScribeVerse
+      run: npm install -g scribeverse
 
     - name: Generate documentation
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
-        docdelta generate --no-git
+        scribeverse generate --no-git
 
     - name: Upload documentation
       uses: actions/upload-artifact@v3
@@ -852,35 +852,35 @@ jobs:
 ### Docker Integration
 
 ```dockerfile
-# Dockerfile.docdelta
+# Dockerfile.scribeverse
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install DocDelta
-RUN npm install -g docdelta
+# Install ScribeVerse
+RUN npm install -g scribeverse
 
 # Copy source code
 COPY . .
 
 # Generate documentation
-CMD ["docdelta", "generate"]
+CMD ["scribeverse", "generate"]
 ```
 
 ```yaml
 # docker-compose.yml
 version: '3.8'
 services:
-  docdelta:
+  scribeverse:
     build:
       context: .
-      dockerfile: Dockerfile.docdelta
+      dockerfile: Dockerfile.scribeverse
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     volumes:
       - ./src:/app/src:ro
       - ./docs:/app/docs
-      - ./docdelta.config.json:/app/docdelta.config.json:ro
+      - ./scribeverse.config.json:/app/scribeverse.config.json:ro
 ```
 
 ### VS Code Extension Integration
@@ -893,7 +893,7 @@ services:
     {
       "label": "Generate Documentation",
       "type": "shell",
-      "command": "docdelta",
+      "command": "scribeverse",
       "args": ["generate"],
       "group": {
         "kind": "build",
@@ -910,7 +910,7 @@ services:
     {
       "label": "Watch Documentation",
       "type": "shell",
-      "command": "docdelta",
+      "command": "scribeverse",
       "args": ["generate", "--watch"],
       "group": "build",
       "isBackground": true,
@@ -928,17 +928,17 @@ services:
 ### Webpack Plugin
 
 ```typescript
-// webpack-docdelta-plugin.js
-class DocDeltaPlugin {
+// webpack-scribeverse-plugin.js
+class ScribeVersePlugin {
   constructor(options = {}) {
     this.options = options;
   }
 
   apply(compiler) {
-    compiler.hooks.afterEmit.tapAsync('DocDeltaPlugin', (compilation, callback) => {
-      const { DocDelta } = require('docdelta');
+    compiler.hooks.afterEmit.tapAsync('ScribeVersePlugin', (compilation, callback) => {
+      const { ScribeVerse } = require('scribeverse');
 
-      const docDelta = new DocDelta({
+      const docDelta = new ScribeVerse({
         sourceDir: './src',
         outputDir: './docs',
         ...this.options
@@ -957,17 +957,17 @@ class DocDeltaPlugin {
   }
 }
 
-module.exports = DocDeltaPlugin;
+module.exports = ScribeVersePlugin;
 ```
 
 ```javascript
 // webpack.config.js
-const DocDeltaPlugin = require('./webpack-docdelta-plugin');
+const ScribeVersePlugin = require('./webpack-scribeverse-plugin');
 
 module.exports = {
   // ... other webpack config
   plugins: [
-    new DocDeltaPlugin({
+    new ScribeVersePlugin({
       ai: {
         provider: 'openai',
         model: 'gpt-4o-mini'
@@ -977,4 +977,4 @@ module.exports = {
 };
 ```
 
-These examples demonstrate various ways to integrate and use DocDelta in different environments and workflows.
+These examples demonstrate various ways to integrate and use ScribeVerse in different environments and workflows.

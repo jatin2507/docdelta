@@ -1,4 +1,4 @@
-# DocDelta Usage Guide
+# ScribeVerse Usage Guide
 
 ## Installation & Setup
 
@@ -21,7 +21,7 @@ ENABLE_GIT_PUSH=false
 LOG_LEVEL=info
 ```
 
-### 4. Initialize DocDelta
+### 4. Initialize ScribeVerse
 ```bash
 npx tsx src/cli/index.ts init
 ```
@@ -68,7 +68,7 @@ npx tsx src/cli/index.ts commit -m "Update documentation"
 
 ## Configuration File
 
-Create `.docdelta.yml` in your project root:
+Create `.scribeverse.yml` in your project root:
 
 ```yaml
 sourceDir: ./src
@@ -91,7 +91,7 @@ git:
   branch: main
 metadata:
   dir: .metadata
-  cacheDir: .docdelta-cache
+  cacheDir: .scribeverse-cache
   enableCache: true
 ```
 
@@ -134,7 +134,7 @@ npm run typecheck
    # Clone or create your project
    cd your-project
 
-   # Initialize DocDelta
+   # Initialize ScribeVerse
    npx tsx path/to/doc-delta/src/cli/index.ts init
 
    # Configure your API key
@@ -208,7 +208,7 @@ class MyCustomParser extends BaseParser {
 
 ### Programmatic API
 
-Use DocDelta in your Node.js scripts:
+Use ScribeVerse in your Node.js scripts:
 
 ```typescript
 import { ParserFactory, DocumentationGenerator } from 'doc-delta';
@@ -242,7 +242,7 @@ doc-delta/
 ├── dist/                 # Compiled JavaScript
 ├── docs/                 # Generated documentation
 ├── .metadata/            # Metadata storage
-└── .docdelta-cache/      # Cache directory
+└── .scribeverse-cache/      # Cache directory
 ```
 
 ## Support

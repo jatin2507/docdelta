@@ -18,7 +18,7 @@ const version = packageJson.version;
 const program = new Command();
 
 program
-  .name('docdelta')
+  .name('scribeverse')
   .description('Multi-language documentation tool with incremental updates and AI-powered summaries')
   .version(version);
 
@@ -32,7 +32,7 @@ program
   .option('--no-git', 'Disable git integration')
   .option('--no-cache', 'Disable caching')
   .action(async (options) => {
-    const spinner = ora('Initializing DocDelta...').start();
+    const spinner = ora('Initializing ScribeVerse...').start();
 
     try {
       const config = ConfigManager.getInstance();
@@ -327,14 +327,14 @@ program
 
 program
   .command('init')
-  .description('Initialize DocDelta in the current directory')
+  .description('Initialize ScribeVerse in the current directory')
   .action(async () => {
-    const spinner = ora('Initializing DocDelta...').start();
+    const spinner = ora('Initializing ScribeVerse...').start();
 
     try {
       const config = ConfigManager.getInstance();
       config.saveConfig();
-      spinner.succeed('Created .docdelta.yml configuration file');
+      spinner.succeed('Created .scribeverse.yml configuration file');
 
       const metadataManager = new MetadataManager();
       await metadataManager.initialize();
@@ -346,11 +346,11 @@ program
         spinner.succeed('Initialized git repository');
       }
 
-      console.log(chalk.green('\n✨ DocDelta initialized successfully!'));
+      console.log(chalk.green('\n✨ ScribeVerse initialized successfully!'));
       console.log(chalk.cyan('\nNext steps:'));
       console.log('  1. Set your OpenAI API key: export OPENAI_API_KEY=your-key');
-      console.log('  2. Configure .docdelta.yml as needed');
-      console.log('  3. Run: docdelta generate');
+      console.log('  2. Configure .scribeverse.yml as needed');
+      console.log('  3. Run: scribeverse generate');
     } catch (error) {
       spinner.fail('Initialization failed');
       console.error(chalk.red(error instanceof Error ? error.message : String(error)));
@@ -452,7 +452,7 @@ program
 
       if (options.export) {
         const data = await db.exportUsageData();
-        const filename = `docdelta-usage-${new Date().toISOString().split('T')[0]}.json`;
+        const filename = `scribeverse-usage-${new Date().toISOString().split('T')[0]}.json`;
         const fs = await import('fs-extra');
         await fs.writeJson(filename, data, { spaces: 2 });
         spinner.succeed(`Usage data exported to ${filename}`);

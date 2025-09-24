@@ -33,8 +33,8 @@ export class DatabaseManager {
 
   constructor() {
     const homeDir = os.homedir();
-    const docDeltaDir = path.join(homeDir, '.docdelta');
-    this.dbPath = path.join(docDeltaDir, 'usage.db');
+    const scribeverseDir = path.join(homeDir, '.scribeverse');
+    this.dbPath = path.join(scribeverseDir, 'usage.db');
     this.sessionId = this.generateSessionId();
   }
 

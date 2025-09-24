@@ -12,7 +12,7 @@ export class ConfigManager {
   private configPath: string;
 
   private constructor() {
-    this.configPath = path.join(process.cwd(), '.docdelta.yml');
+    this.configPath = path.join(process.cwd(), '.scribeverse.yml');
     this.config = this.loadConfig();
   }
 
@@ -73,7 +73,7 @@ export class ConfigManager {
       },
       metadata: {
         dir: process.env.METADATA_DIR || '.metadata',
-        cacheDir: process.env.CACHE_DIR || '.docdelta-cache',
+        cacheDir: process.env.CACHE_DIR || '.scribeverse-cache',
         enableCache: process.env.ENABLE_CACHE !== 'false',
       },
     };

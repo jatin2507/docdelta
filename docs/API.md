@@ -1,6 +1,6 @@
-# DocDelta API Reference
+# ScribeVerse API Reference
 
-This document provides comprehensive API documentation for DocDelta's programmatic interfaces.
+This document provides comprehensive API documentation for ScribeVerse's programmatic interfaces.
 
 ## Table of Contents
 
@@ -13,15 +13,15 @@ This document provides comprehensive API documentation for DocDelta's programmat
 
 ## Core Classes
 
-### DocDelta
+### ScribeVerse
 
-The main DocDelta class that orchestrates documentation generation.
+The main ScribeVerse class that orchestrates documentation generation.
 
 ```typescript
-import { DocDelta, DocDeltaConfig } from 'docdelta';
+import { ScribeVerse, ScribeVerseConfig } from 'scribeverse';
 
-class DocDelta {
-  constructor(config: DocDeltaConfig);
+class ScribeVerse {
+  constructor(config: ScribeVerseConfig);
 
   // Main methods
   async generate(): Promise<GenerationResult>;
@@ -29,8 +29,8 @@ class DocDelta {
   async analyzeDependencies(): Promise<DependencyInfo[]>;
 
   // Configuration
-  updateConfig(updates: Partial<DocDeltaConfig>): void;
-  getConfig(): DocDeltaConfig;
+  updateConfig(updates: Partial<ScribeVerseConfig>): void;
+  getConfig(): ScribeVerseConfig;
 
   // Validation
   async validateConfig(): Promise<boolean>;
@@ -40,7 +40,7 @@ class DocDelta {
 #### Example Usage
 
 ```typescript
-const docDelta = new DocDelta({
+const docDelta = new ScribeVerse({
   sourceDir: './src',
   outputDir: './docs',
   ai: {
@@ -54,16 +54,16 @@ const result = await docDelta.generate();
 console.log(`Generated documentation for ${result.stats.filesProcessed} files`);
 ```
 
-### DocDeltaManager
+### ScribeVerseManager
 
 Advanced manager for multi-project documentation generation.
 
 ```typescript
-import { DocDeltaManager } from 'docdelta';
+import { ScribeVerseManager } from 'scribeverse';
 
-class DocDeltaManager {
+class ScribeVerseManager {
   // Project management
-  async addProject(name: string, config: DocDeltaConfig): Promise<void>;
+  async addProject(name: string, config: ScribeVerseConfig): Promise<void>;
   async removeProject(name: string): Promise<void>;
   async processProjects(projects: ProjectConfig[]): Promise<Map<string, GenerationResult>>;
 
@@ -336,11 +336,11 @@ Configuration management utilities.
 
 ```typescript
 class ConfigManager {
-  static load(configPath?: string): Promise<DocDeltaConfig>;
-  static save(config: DocDeltaConfig, configPath?: string): Promise<void>;
-  static validate(config: DocDeltaConfig): ValidationResult;
-  static merge(base: DocDeltaConfig, override: Partial<DocDeltaConfig>): DocDeltaConfig;
-  static getDefaultConfig(): DocDeltaConfig;
+  static load(configPath?: string): Promise<ScribeVerseConfig>;
+  static save(config: ScribeVerseConfig, configPath?: string): Promise<void>;
+  static validate(config: ScribeVerseConfig): ValidationResult;
+  static merge(base: ScribeVerseConfig, override: Partial<ScribeVerseConfig>): ScribeVerseConfig;
+  static getDefaultConfig(): ScribeVerseConfig;
 }
 ```
 
@@ -405,7 +405,7 @@ class MetadataManager {
 ### Core Types
 
 ```typescript
-interface DocDeltaConfig {
+interface ScribeVerseConfig {
   sourceDir: string;
   outputDir: string;
   include?: string[];
@@ -525,25 +525,25 @@ enum AIProvider {
 
 ## Error Handling
 
-### DocDeltaError
+### ScribeVerseError
 
-Base error class for DocDelta-specific errors.
+Base error class for ScribeVerse-specific errors.
 
 ```typescript
-class DocDeltaError extends Error {
+class ScribeVerseError extends Error {
   constructor(message: string, code?: string);
 
   readonly code?: string;
   readonly timestamp: Date;
 }
 
-class ParsingError extends DocDeltaError {
+class ParsingError extends ScribeVerseError {
   constructor(filePath: string, message: string);
 
   readonly filePath: string;
 }
 
-class AIProviderError extends DocDeltaError {
+class AIProviderError extends ScribeVerseError {
   constructor(provider: AIProvider, message: string, statusCode?: number);
 
   readonly provider: AIProvider;
@@ -551,7 +551,7 @@ class AIProviderError extends DocDeltaError {
   readonly retryable: boolean;
 }
 
-class ConfigurationError extends DocDeltaError {
+class ConfigurationError extends ScribeVerseError {
   constructor(message: string, path?: string);
 
   readonly path?: string;
@@ -563,9 +563,9 @@ class ConfigurationError extends DocDeltaError {
 ### Basic Usage
 
 ```typescript
-import { DocDelta } from 'docdelta';
+import { ScribeVerse } from 'scribeverse';
 
-const docDelta = new DocDelta({
+const docDelta = new ScribeVerse({
   sourceDir: './src',
   outputDir: './docs',
   ai: {
@@ -585,7 +585,7 @@ try {
 ### Advanced Multi-Provider Setup
 
 ```typescript
-import { AIProviderManager } from 'docdelta';
+import { AIProviderManager } from 'scribeverse';
 
 const manager = new AIProviderManager({
   providers: [
@@ -616,7 +616,7 @@ const response = await manager.generateText(
 ### Custom Parser
 
 ```typescript
-import { BaseParser, Language } from 'docdelta';
+import { BaseParser, Language } from 'scribeverse';
 
 class CustomParser extends BaseParser {
   constructor() {
@@ -649,4 +649,4 @@ class CustomParser extends BaseParser {
 }
 ```
 
-This API reference provides comprehensive documentation for integrating DocDelta into your applications and extending its functionality with custom parsers, providers, and generators.
+This API reference provides comprehensive documentation for integrating ScribeVerse into your applications and extending its functionality with custom parsers, providers, and generators.

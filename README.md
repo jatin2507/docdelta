@@ -1,8 +1,8 @@
-# DocDelta
+# ScribeVerse
 
 **AI-Powered Documentation Generation for Codebases**
 
-DocDelta is a powerful tool that analyzes your codebase and generates comprehensive documentation using advanced AI models. It intelligently parses your code, understands dependencies, and creates structured documentation that helps developers understand and maintain projects more effectively.
+ScribeVerse is a powerful tool that analyzes your codebase and generates comprehensive documentation using advanced AI models. It intelligently parses your code, understands dependencies, and creates structured documentation that helps developers understand and maintain projects more effectively.
 
 ## 🚀 Features
 
@@ -30,12 +30,12 @@ DocDelta is a powerful tool that analyzes your codebase and generates comprehens
 ## 📦 Installation
 
 ```bash
-npm install -g docdelta
+npm install -g scribeverse
 ```
 
 Or use with npx:
 ```bash
-npx docdelta --help
+npx scribeverse --help
 ```
 
 ## 🏗️ Quick Start
@@ -43,10 +43,10 @@ npx docdelta --help
 ### 1. Initialize Configuration
 
 ```bash
-docdelta init
+scribeverse init
 ```
 
-This creates a `docdelta.config.json` with default settings.
+This creates a `scribeverse.config.json` with default settings.
 
 ### 2. Configure AI Provider
 
@@ -70,13 +70,13 @@ Edit the generated config file:
 
 ```bash
 # Generate full documentation
-docdelta generate
+scribeverse generate
 
 # Generate for specific files
-docdelta generate --include "src/**/*.ts"
+scribeverse generate --include "src/**/*.ts"
 
 # Watch mode (regenerate on changes)
-docdelta generate --watch
+scribeverse generate --watch
 ```
 
 ## ⚙️ Configuration
@@ -203,9 +203,9 @@ docdelta generate --watch
 ```json
 {
   "metadata": {
-    "dir": ".docdelta",
+    "dir": ".scribeverse",
     "enableCache": true,
-    "cacheDir": ".docdelta/cache"
+    "cacheDir": ".scribeverse/cache"
   }
 }
 ```
@@ -214,10 +214,10 @@ docdelta generate --watch
 
 ### Generate Documentation
 ```bash
-docdelta generate [options]
+scribeverse generate [options]
 
 Options:
-  -c, --config <file>     Config file path (default: docdelta.config.json)
+  -c, --config <file>     Config file path (default: scribeverse.config.json)
   -w, --watch             Watch for changes and regenerate
   -i, --include <pattern> Include files matching pattern
   -e, --exclude <pattern> Exclude files matching pattern
@@ -227,7 +227,7 @@ Options:
 
 ### Initialize Project
 ```bash
-docdelta init [options]
+scribeverse init [options]
 
 Options:
   --provider <provider>   AI provider (openai, anthropic, etc.)
@@ -237,23 +237,23 @@ Options:
 
 ### List Providers & Models
 ```bash
-docdelta providers                 # List available providers
-docdelta models --provider openai  # List models for provider
+scribeverse providers                 # List available providers
+scribeverse models --provider openai  # List models for provider
 ```
 
 ### Token Usage Tracking
 ```bash
-docdelta usage                     # Show usage statistics
-docdelta usage --days 7           # Show last 7 days
-docdelta usage --provider openai   # Filter by provider
-docdelta usage --export           # Export usage data to JSON
-docdelta usage --clear            # Clear all usage history
-docdelta usage --clear 30         # Clear records older than 30 days
+scribeverse usage                     # Show usage statistics
+scribeverse usage --days 7           # Show last 7 days
+scribeverse usage --provider openai   # Filter by provider
+scribeverse usage --export           # Export usage data to JSON
+scribeverse usage --clear            # Clear all usage history
+scribeverse usage --clear 30         # Clear records older than 30 days
 ```
 
 ### Validate Configuration
 ```bash
-docdelta validate                  # Validate config and AI connection
+scribeverse validate                  # Validate config and AI connection
 ```
 
 ## 📁 Output Structure
@@ -273,7 +273,7 @@ docs/
 │   ├── auth/
 │   ├── database/
 │   └── utils/
-└── .metadata/                  # DocDelta metadata
+└── .metadata/                  # ScribeVerse metadata
     ├── chunks.json
     ├── dependencies.json
     └── cache/
@@ -345,10 +345,10 @@ Create custom documentation templates:
 
 ### Custom Providers
 
-Extend DocDelta with custom AI providers:
+Extend ScribeVerse with custom AI providers:
 
 ```typescript
-import { BaseAIProvider, AIResponse } from 'docdelta';
+import { BaseAIProvider, AIResponse } from 'scribeverse';
 
 export class CustomProvider extends BaseAIProvider {
   async generateText(prompt: string): Promise<AIResponse> {
@@ -361,7 +361,7 @@ export class CustomProvider extends BaseAIProvider {
 
 ### Token Usage Tracking & Analytics
 
-DocDelta automatically tracks token usage and costs for all AI providers with a built-in SQLite database:
+ScribeVerse automatically tracks token usage and costs for all AI providers with a built-in SQLite database:
 
 #### Features
 - **Automatic Tracking**: All AI calls are tracked automatically
@@ -369,12 +369,12 @@ DocDelta automatically tracks token usage and costs for all AI providers with a 
 - **Usage Analytics**: Detailed breakdowns by provider, model, and operation
 - **Historical Data**: Complete usage history with timestamps
 - **Export/Import**: JSON export for external analysis
-- **Privacy First**: All data stored locally in `~/.docdelta/usage.db`
+- **Privacy First**: All data stored locally in `~/.scribeverse/usage.db`
 
 #### Usage Statistics
 ```bash
 # View comprehensive usage statistics
-docdelta usage
+scribeverse usage
 
 # Output example:
 📊 Token Usage Statistics (Last 30 days)
@@ -403,8 +403,8 @@ docdelta usage
 #### Data Export
 ```bash
 # Export usage data for analysis
-docdelta usage --export
-# Creates: docdelta-usage-2025-09-24.json
+scribeverse usage --export
+# Creates: scribeverse-usage-2025-09-24.json
 
 # Example export structure:
 {
@@ -426,9 +426,9 @@ docdelta usage --export
 ### Programmatic API
 
 ```typescript
-import { DocDelta } from 'docdelta';
+import { ScribeVerse } from 'scribeverse';
 
-const docDelta = new DocDelta({
+const docDelta = new ScribeVerse({
   sourceDir: './src',
   outputDir: './docs',
   ai: {
@@ -450,9 +450,9 @@ const dependencies = await docDelta.analyzeDependencies();
 ### Batch Processing
 
 ```typescript
-import { DocDeltaManager } from 'docdelta';
+import { ScribeVerseManager } from 'scribeverse';
 
-const manager = new DocDeltaManager();
+const manager = new ScribeVerseManager();
 
 // Process multiple projects
 await manager.processProjects([
@@ -465,7 +465,7 @@ await manager.processProjects([
 ### Custom Analysis
 
 ```typescript
-import { TypeScriptParser } from 'docdelta/parsers';
+import { TypeScriptParser } from 'scribeverse/parsers';
 
 const parser = new TypeScriptParser();
 const chunks = await parser.parse('./src/app.ts', sourceCode);
@@ -477,7 +477,7 @@ const classes = chunks.filter(chunk => chunk.type === 'class');
 
 ## 🧪 Testing
 
-DocDelta includes comprehensive test coverage:
+ScribeVerse includes comprehensive test coverage:
 
 ```bash
 # Run all tests
@@ -516,8 +516,8 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/docdelta.git
-cd docdelta
+git clone https://github.com/yourusername/scribeverse.git
+cd scribeverse
 
 # Install dependencies
 npm install
@@ -535,8 +535,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🙋 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/docdelta/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/docdelta/discussions)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/scribeverse/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/scribeverse/discussions)
 
 ## 🗺️ Roadmap
 
@@ -549,4 +549,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**DocDelta - Intelligent Documentation for Modern Development**
+**ScribeVerse - Intelligent Documentation for Modern Development**

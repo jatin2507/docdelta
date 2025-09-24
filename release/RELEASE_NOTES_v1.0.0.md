@@ -1,16 +1,16 @@
-# DocDelta v1.0.0 Release Notes
+# ScribeVerse v1.0.0 Release Notes
 
 **Release Date:** September 24, 2025
 **Version:** 1.0.0
 **Type:** Major Release - Initial Production Release
 
-## 🎉 Welcome to DocDelta v1.0.0!
+## 🎉 Welcome to ScribeVerse v1.0.0!
 
-We're excited to announce the first stable release of DocDelta - the AI-powered documentation generation tool that revolutionizes how you create and maintain project documentation. After extensive development and testing, DocDelta is now ready for production use with zero bugs and comprehensive feature coverage.
+We're excited to announce the first stable release of ScribeVerse - the AI-powered documentation generation tool that revolutionizes how you create and maintain project documentation. After extensive development and testing, ScribeVerse is now ready for production use with zero bugs and comprehensive feature coverage.
 
-## 🌟 What is DocDelta?
+## 🌟 What is ScribeVerse?
 
-DocDelta is a sophisticated multi-language documentation tool that combines intelligent code parsing with cutting-edge AI providers to automatically generate comprehensive, up-to-date documentation for your projects. It supports incremental updates, Git integration, and provides unparalleled flexibility in documentation generation.
+ScribeVerse is a sophisticated multi-language documentation tool that combines intelligent code parsing with cutting-edge AI providers to automatically generate comprehensive, up-to-date documentation for your projects. It supports incremental updates, Git integration, and provides unparalleled flexibility in documentation generation.
 
 ## ⭐ Key Features
 
@@ -127,8 +127,8 @@ npm install -g doc-delta
 ### Quick Start (OpenAI)
 ```bash
 export OPENAI_API_KEY=your-key-here
-docdelta init
-docdelta generate
+scribeverse init
+scribeverse generate
 ```
 
 ### Multi-Provider Setup
@@ -149,7 +149,7 @@ docdelta generate
 ```bash
 # Install Ollama and pull models
 ollama pull llama3.2
-docdelta init --provider ollama
+scribeverse init --provider ollama
 ```
 
 ## 📊 Performance & Efficiency
@@ -220,7 +220,7 @@ This is the initial v1.0.0 release, so no breaking changes from previous version
 
 ## 🙏 Acknowledgments
 
-Special thanks to all the AI providers and open-source projects that make DocDelta possible:
+Special thanks to all the AI providers and open-source projects that make ScribeVerse possible:
 
 - **OpenAI** - GPT models and embeddings
 - **Anthropic** - Claude models for detailed analysis
@@ -253,15 +253,15 @@ Special thanks to all the AI providers and open-source projects that make DocDel
 
 ## 🎊 Thank You
 
-Thank you for choosing DocDelta v1.0.0! This release represents months of development, testing, and refinement to deliver a production-ready documentation solution. We're excited to see how you'll use DocDelta to improve your development workflows and create better documentation.
+Thank you for choosing ScribeVerse v1.0.0! This release represents months of development, testing, and refinement to deliver a production-ready documentation solution. We're excited to see how you'll use ScribeVerse to improve your development workflows and create better documentation.
 
-Whether you're documenting a small personal project or managing documentation across an enterprise organization, DocDelta v1.0.0 provides the tools, flexibility, and reliability you need to succeed.
+Whether you're documenting a small personal project or managing documentation across an enterprise organization, ScribeVerse v1.0.0 provides the tools, flexibility, and reliability you need to succeed.
 
 **Happy Documenting! 🎉**
 
 ---
 
-*DocDelta v1.0.0 - AI-Powered Documentation Generation Made Simple*
+*ScribeVerse v1.0.0 - AI-Powered Documentation Generation Made Simple*
 
 **Download:** `npm install -g doc-delta`
 **Documentation:** [docs/README.md](../docs/README.md)

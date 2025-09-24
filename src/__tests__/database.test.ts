@@ -9,7 +9,7 @@ describe('DatabaseManager', () => {
 
   beforeAll(async () => {
     // Create a temporary directory for test database
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'docdelta-test-'));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'scribeverse-test-'));
     tempDbPath = path.join(tempDir, 'test.db');
   });
 

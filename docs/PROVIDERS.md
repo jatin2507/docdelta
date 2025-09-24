@@ -1,6 +1,6 @@
 # AI Provider Configuration Guide
 
-DocDelta supports 7 major AI providers with 50+ models. This guide covers setup, configuration, and optimization for each provider.
+ScribeVerse supports 7 major AI providers with 50+ models. This guide covers setup, configuration, and optimization for each provider.
 
 ## Overview
 
@@ -34,7 +34,7 @@ export DOCDELTA_LOG_LEVEL="info"
 
 ### 2. Configuration File
 
-Create `docdelta.config.json`:
+Create `scribeverse.config.json`:
 
 ```json
 {
@@ -576,7 +576,7 @@ const results = await Promise.all(analysisPromises.slice(0, 5));
 ```typescript
 const metadataManager = new MetadataManager({
   enableCache: true,
-  cacheDir: '.docdelta/cache'
+  cacheDir: '.scribeverse/cache'
 });
 
 // Check cache before AI request
@@ -767,4 +767,4 @@ if (!accessInfo?.available) {
 }
 ```
 
-This guide provides comprehensive setup and optimization strategies for all supported AI providers in DocDelta.
+This guide provides comprehensive setup and optimization strategies for all supported AI providers in ScribeVerse.

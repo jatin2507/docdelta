@@ -1,6 +1,6 @@
-# Contributing to DocDelta
+# Contributing to ScribeVerse
 
-Thank you for your interest in contributing to DocDelta! This guide will help you get started with contributing to this AI-powered documentation generation tool.
+Thank you for your interest in contributing to ScribeVerse! This guide will help you get started with contributing to this AI-powered documentation generation tool.
 
 ## Table of Contents
 
@@ -37,8 +37,8 @@ This project adheres to a code of conduct that we expect all contributors to fol
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/your-username/docdelta.git
-   cd docdelta
+   git clone https://github.com/your-username/scribeverse.git
+   cd scribeverse
    ```
 
 3. **Install dependencies**:
@@ -113,7 +113,7 @@ The repository includes VS Code configuration in `.vscode/`:
 ## Project Structure
 
 ```
-docdelta/
+scribeverse/
 ├── src/                        # Source code
 │   ├── core/                   # Core functionality
 │   │   ├── ai/                 # AI providers and management
@@ -335,13 +335,13 @@ describe('TypeScriptParser', () => {
 #### Integration Tests
 
 ```typescript
-// __tests__/integration/docdelta.test.ts
-import { DocDelta } from '@/index';
+// __tests__/integration/scribeverse.test.ts
+import { ScribeVerse } from '@/index';
 import { MockAIProvider } from '@/test-utils/mock-ai-provider';
 
-describe('DocDelta Integration', () => {
+describe('ScribeVerse Integration', () => {
   test('should generate documentation for sample project', async () => {
-    const docDelta = new DocDelta({
+    const docDelta = new ScribeVerse({
       sourceDir: '__tests__/fixtures/sample-project',
       outputDir: '__tests__/output',
       ai: {
@@ -745,4 +745,4 @@ Contributors will be recognized in:
 - Release notes
 - Special acknowledgments for significant contributions
 
-Thank you for contributing to DocDelta! Your contributions help make documentation generation better for everyone.
+Thank you for contributing to ScribeVerse! Your contributions help make documentation generation better for everyone.
