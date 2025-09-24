@@ -1,6 +1,6 @@
 {
   "name": "scribeverse",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "commonjs",
   "description": "Multi-language documentation tool with incremental updates and AI-powered summaries",
   "main": "dist/index.js",

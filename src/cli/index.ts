@@ -524,4 +524,119 @@ program
     }
   });
 
+// Smart commit command with diff analysis
+program
+  .command('smart-commit')
+  .alias('sc')
+  .description('Analyze changes and create smart commit with auto-generated message')
+  .option('-a, --add-all', 'Add all changes before committing')
+  .option('-p, --push', 'Push after committing')
+  .option('-m, --message <message>', 'Custom commit message (overrides auto-generation)')
+  .option('--dry-run', 'Show what would be committed without actually committing')
+  .option('--analyze-only', 'Only analyze changes without committing')
+  .action(async (options) => {
+    const ora = (await import('ora')).default;
+    const chalk = (await import('chalk')).default;
+    const { SmartGit } = await import('../utils/git-smart');
+
+    const spinner = ora('Analyzing code changes...').start();
+
+    try {
+      const smartGit = new SmartGit();
+
+      // Check if we're in a git repository
+      if (!(await smartGit.isGitRepository())) {
+        spinner.fail('Not a git repository');
+        process.exit(1);
+      }
+
+      // Get current status
+      const status = await smartGit.getStatus();
+
+      if (status.isClean && !options.addAll) {
+        spinner.warn('No changes detected');
+        console.log(chalk.yellow('💡 Use --add-all to include untracked files'));
+        return;
+      }
+
+      // Add all files if requested
+      if (options.addAll) {
+        spinner.text = 'Adding all changes...';
+        await import('child_process').then(cp =>
+          cp.execSync('git add .', { cwd: process.cwd() })
+        );
+      }
+
+      // Analyze changes
+      spinner.text = 'Analyzing changes and generating commit message...';
+      const analysis = await smartGit.analyzeChanges();
+
+      spinner.succeed('Analysis complete');
+
+      // Display analysis
+      console.log(chalk.blue('\n📊 Change Analysis:'));
+      console.log(chalk.cyan(`Branch: ${status.branch}`));
+      console.log(chalk.cyan(`Change Type: ${analysis.changeType}`));
+      console.log(chalk.cyan(`Summary: ${analysis.summary}`));
+
+      console.log(chalk.blue('\n📝 Generated Commit Message:'));
+      console.log(chalk.green(`"${analysis.commitMessage}"`));
+
+      console.log(chalk.blue('\n📁 Files Changed:'));
+      analysis.files.forEach(file => {
+        const icon = file.changeType === 'added' ? '✅' :
+                    file.changeType === 'modified' ? '📝' :
+                    file.changeType === 'deleted' ? '❌' : '🔄';
+
+        let stats = '';
+        if (file.additions > 0) stats += chalk.green(`+${file.additions}`);
+        if (file.deletions > 0) stats += chalk.red(`-${file.deletions}`);
+        if (stats) stats = `(${stats})`;
+
+        console.log(`  ${icon} ${file.file} ${chalk.gray(stats)}`);
+      });
+
+      // Exit if analyze-only or dry-run
+      if (options.analyzeOnly) {
+        console.log(chalk.blue('\n✨ Analysis complete (no commit created)'));
+        return;
+      }
+
+      if (options.dryRun) {
+        console.log(chalk.blue('\n🔍 Dry run complete (no commit created)'));
+        return;
+      }
+
+      // Confirm commit
+      const message = options.message || analysis.commitMessage;
+
+      console.log(chalk.blue('\n🚀 Creating commit...'));
+      const commitSpinner = ora(`Committing changes: "${message}"`).start();
+
+      try {
+        await smartGit.createSmartCommit({
+          addAll: false, // Already added if needed
+          push: options.push,
+          customMessage: options.message
+        });
+
+        commitSpinner.succeed(`Commit created: ${message}`);
+
+        if (options.push) {
+          console.log(chalk.green(`📤 Pushed to ${status.branch}`));
+        }
+
+        console.log(chalk.blue('\n✨ Smart commit completed successfully!'));
+      } catch (error) {
+        commitSpinner.fail('Commit failed');
+        throw error;
+      }
+
+    } catch (error) {
+      spinner.fail('Smart commit failed');
+      console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+      process.exit(1);
+    }
+  });
+
 program.parse(process.argv);

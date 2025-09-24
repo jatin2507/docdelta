@@ -7,6 +7,7 @@ Welcome to the comprehensive documentation for ScribeVerse - the AI-powered docu
 ### 📖 Core Documentation
 
 - **[README.md](../README.md)** - Main project overview, features, and quick start guide
+- **[SMART-FEATURES.md](./SMART-FEATURES.md)** - 🧠 Revolutionary smart features and AI automation
 - **[API.md](./API.md)** - Complete API reference for programmatic usage
 - **[PROVIDERS.md](./PROVIDERS.md)** - Detailed AI provider configuration guide
 - **[EXAMPLES.md](./EXAMPLES.md)** - Practical usage examples and integration patterns
@@ -121,18 +122,17 @@ ScribeVerse supports parsing and documentation for:
 
 ### Development Workflow
 ```bash
-# 1. Set up ScribeVerse in your project
-scribeverse init --provider openai
+# 1. Set up ScribeVerse with smart auto-detection
+scribeverse init --smart
 
-# 2. Generate initial documentation
-scribeverse generate
+# 2. Generate initial documentation with auto-language detection
+scribeverse generate --auto-detect
 
 # 3. Set up watch mode for development
 scribeverse generate --watch
 
-# 4. Commit documentation changes
-git add docs/
-git commit -m "docs: update API documentation"
+# 4. Use smart commit with auto-generated message
+scribeverse smart-commit --add-all --push
 ```
 
 ### CI/CD Workflow

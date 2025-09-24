@@ -68,8 +68,8 @@ export class ConfigManager {
         enabled: process.env.ENABLE_GIT !== 'false',
         autoPush: process.env.AUTO_PUSH === 'true',
         remote: process.env.GIT_REMOTE || 'origin',
-        branch: process.env.GIT_BRANCH || 'main',
-        commitPrefix: process.env.COMMIT_PREFIX || 'docs:',
+        branch: process.env.GIT_BRANCH || 'auto',
+        commitPrefix: process.env.COMMIT_PREFIX || 'auto',
       },
       metadata: {
         dir: process.env.METADATA_DIR || '.metadata',
