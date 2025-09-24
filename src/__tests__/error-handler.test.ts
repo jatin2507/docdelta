@@ -255,10 +255,12 @@ describe('ErrorUtils', () => {
     });
 
     it('should throw ScribeVerseError for async function failures', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
       const asyncFn = jest.fn().mockRejectedValue(new Error('Async error'));
       const wrappedFn = ErrorUtils.withErrorHandling(asyncFn, { component: 'test' });
 
       await expect(wrappedFn()).rejects.toThrow(ScribeVerseError);
+      consoleSpy.mockRestore();
     });
   });
 
@@ -274,10 +276,12 @@ describe('ErrorUtils', () => {
     });
 
     it('should throw ScribeVerseError for sync function failures', () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
       const syncFn = jest.fn(() => { throw new Error('Sync error'); });
       const wrappedFn = ErrorUtils.withErrorHandlingSync(syncFn, { component: 'test' });
 
       expect(() => wrappedFn()).toThrow(ScribeVerseError);
+      consoleSpy.mockRestore();
     });
   });
 

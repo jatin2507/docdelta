@@ -75,19 +75,25 @@ describe('AIService', () => {
     });
 
     it('should throw error with invalid API key', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       const invalidConfig = { apiKey: 'short' };
       expect(() => new AIService(invalidConfig)).toThrow(ScribeVerseError);
+      consoleSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
     });
 
     it('should throw error without API key', () => {
       // Mock environment variables to be empty
       const originalEnv = process.env;
       process.env = {};
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
       const emptyConfig = { apiKey: '' };
       expect(() => new AIService(emptyConfig)).toThrow(ScribeVerseError);
 
       process.env = originalEnv;
+      consoleSpy.mockRestore();
     });
   });
 
@@ -109,12 +115,14 @@ describe('AIService', () => {
     });
 
     it('should handle empty chunks array', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
       const request = {
         chunks: [],
         docType: DocType.MODULE
       };
 
       await expect(aiService.summarizeChunks(request)).rejects.toThrow(ScribeVerseError);
+      consoleSpy.mockRestore();
     });
 
     it('should validate chunk structure and filter invalid ones', async () => {

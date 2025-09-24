@@ -21,4 +21,6 @@ module.exports = {
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
     '^@types/(.*)$': '<rootDir>/src/types/$1',
   },
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  silent: true,
 };
