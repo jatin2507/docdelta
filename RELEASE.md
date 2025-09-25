@@ -1,9 +1,29 @@
-# ScribeVerse Releases
+# 🚀 ScribeVerse Release Notes
 
-## 🚀 Version 1.1.8 - Latest Release
+<div align="center">
 
-**Release Date:** September 24, 2025
-**Status:** Stable - Major Feature Update
+![ScribeVerse Banner](https://img.shields.io/badge/ScribeVerse-v1.1.8-blue?style=for-the-badge&logo=typescript)
+![Status](https://img.shields.io/badge/Status-Stable-green?style=for-the-badge)
+![Tests](https://img.shields.io/badge/Tests-130%20passed-brightgreen?style=for-the-badge)
+![Build](https://img.shields.io/badge/Build-Passing-success?style=for-the-badge)
+
+</div>
+
+## 📋 Table of Contents
+
+- [🎯 Latest Release - v1.1.8](#-latest-release---v118)
+- [📈 Previous Releases](#-previous-releases)
+- [🔗 Quick Links](#-quick-links)
+
+---
+
+## 🎯 Latest Release - v1.1.8
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Release%20Date-September%2024%2C%202025-blue?style=flat-square" alt="Release Date">
+  <img src="https://img.shields.io/badge/Type-Major%20Feature%20Update-orange?style=flat-square" alt="Release Type">
+  <img src="https://img.shields.io/badge/Stability-Production%20Ready-green?style=flat-square" alt="Stability">
+</div>
 
 ### 🎉 What's New in v1.1.8
 
@@ -149,7 +169,9 @@ scribeverse generate -o ./project-documentation
 
 ---
 
-## 🚀 Version 1.2.7 - Previous Release
+# 📈 Previous Releases
+
+## 🚀 Version 1.2.7
 
 **Release Date:** September 24, 2025
 **Status:** Stable - Bulletproof Fallback System
@@ -538,4 +560,38 @@ MIT License - see [LICENSE](LICENSE) for details.
 npm install -g scribeverse@1.2.3
 ```
 
-*ScribeVerse - AI-Powered Documentation Generation for Modern Development*
+## 🔗 Quick Links
+
+<div align="center">
+
+[![Download](https://img.shields.io/badge/Download-npm%20install%20-g%20scribeverse-red?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/scribeverse)
+[![Documentation](https://img.shields.io/badge/Documentation-README-blue?style=for-the-badge&logo=markdown)](./README.md)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/jatin2507/scribeverse)
+[![Issues](https://img.shields.io/badge/Issues-Report%20Bug-orange?style=for-the-badge&logo=github)](https://github.com/jatin2507/scribeverse/issues)
+
+</div>
+
+### 🚀 Quick Start
+
+```bash
+# Install the latest version
+npm install -g scribeverse@1.1.8
+
+# Initialize your project
+scribeverse init
+
+# Generate documentation
+scribeverse generate
+```
+
+---
+
+<div align="center">
+
+**🎉 ScribeVerse - AI-Powered Documentation Generation for Modern Development**
+
+[![Stars](https://img.shields.io/github/stars/jatin2507/scribeverse?style=social)](https://github.com/jatin2507/scribeverse)
+[![Forks](https://img.shields.io/github/forks/jatin2507/scribeverse?style=social)](https://github.com/jatin2507/scribeverse)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](./LICENSE)
+
+</div>
