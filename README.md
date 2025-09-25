@@ -3,7 +3,7 @@
 <div align="center">
 
 ![ScribeVerse Logo](https://img.shields.io/badge/ScribeVerse-AI%20Documentation%20Generator-blue?style=for-the-badge&logo=typescript)
-![Version](https://img.shields.io/badge/version-1.1.8-green?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.1.10-green?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen?style=for-the-badge&logo=node.js)
 
@@ -22,8 +22,9 @@ ScribeVerse automatically analyzes your codebase and generates comprehensive doc
 ### ✨ Core Capabilities
 
 - **🤖 AI-Powered Analysis** - Understands code context and relationships
+- **📦 Automatic Dependencies** - Installs AI provider SDKs automatically as needed
 - **📊 Visual Documentation** - Generates actual diagram images, not just text
-- **🔌 VS Code Integration** - Works directly with your existing AI extensions
+- **🔌 VS Code Integration** - Works directly with VS Code Language Model API
 - **🛡️ Bulletproof Reliability** - Multiple fallback systems ensure 100% success
 - **🌐 Multi-Language Support** - TypeScript, Python, SQL, and more
 - **⚡ Smart Automation** - Incremental updates and intelligent processing
@@ -58,9 +59,14 @@ This creates a `scribeverse.config.json` with intelligent defaults.
 
 ### 2. Configure AI Provider (Choose One)
 
-**Option A: VS Code Integration (No API Key Needed)**
-```bash
-scribeverse generate --use-vscode
+**Option A: VS Code Language Model (No API Key Needed)**
+```json
+{
+  "ai": {
+    "provider": "vscode-lm",
+    "model": "auto"
+  }
+}
 ```
 
 **Option B: OpenAI**
@@ -79,7 +85,7 @@ scribeverse generate --use-vscode
 {
   "ai": {
     "provider": "anthropic",
-    "model": "claude-3-5-sonnet-20241022",
+    "model": "claude-3-5-sonnet",
     "apiKey": "sk-ant-..."
   }
 }
@@ -102,60 +108,33 @@ scribeverse generate --diagrams
 ## 📚 Complete Features Overview
 
 ### 🔌 VS Code Language Model Integration
-**Revolutionary integration - Use AI without API keys through VS Code extensions**
+**Seamless integration with VS Code Language Model API**
 
-ScribeVerse can directly access VS Code's Language Model API, allowing you to use AI models through your existing VS Code extensions without needing API keys.
+ScribeVerse integrates directly with VS Code's Language Model API, allowing you to use AI models through VS Code without managing API keys.
 
 ```bash
-# Auto-discover and use VS Code AI extensions
-scribeverse generate --use-vscode
+# Generate docs using VS Code LM API
+scribeverse generate --provider vscode-lm
 
-# Initialize with VS Code integration
-scribeverse init --provider vscode-extension
-
-# Check available VS Code models
-scribeverse models --provider vscode-extension
+# Initialize with VS Code LM integration
+scribeverse init --provider vscode-lm
 ```
-
-**Supported VS Code Extensions:**
-- **GitHub Copilot** - Use your existing Copilot subscription
-- **Claude for VS Code** - Anthropic's official VS Code extension
-- **Continue** - Open-source AI coding assistant
-- **Codeium** - Free AI code completion
-- **TabNine** - AI-powered code completion
-- **CodeWhisperer** - Amazon's AI coding companion
 
 **Configuration Example:**
 ```json
 {
   "ai": {
-    "provider": "vscode-extension",
-    "useVSCodeExtensions": true,
-    "preferVSCodeExtensions": true,
-    "vscodeExtensions": [
-      {
-        "id": "GitHub.copilot",
-        "name": "GitHub Copilot",
-        "enabled": true,
-        "priority": 10
-      },
-      {
-        "id": "Anthropic.claude-vscode",
-        "name": "Claude",
-        "enabled": true,
-        "priority": 8
-      }
-    ]
+    "provider": "vscode-lm",
+    "model": "auto"
   }
 }
 ```
 
 **Benefits:**
 - ✅ No API key management required
-- ✅ Uses your existing subscriptions
-- ✅ Native VS Code integration
-- ✅ Automatic fallback if extensions unavailable
-- ✅ Works offline with compatible extensions
+- ✅ Uses VS Code's built-in AI capabilities
+- ✅ Simple configuration
+- ✅ Automatic model selection
 
 ### 🎨 Visual Diagram Generation
 **Generate actual images and interactive diagrams, not just text**
@@ -365,18 +344,17 @@ ScribeVerse supports the largest variety of AI providers, from cloud-based to lo
 
 **Best For:** Free tier usage, multimodal content, cost-effective documentation
 
-#### **GitHub Copilot Integration**
+#### **VS Code Language Model Integration**
 ```json
 {
   "ai": {
-    "provider": "github-copilot",
-    "githubToken": "${GITHUB_TOKEN}",
-    "model": "gpt-4"
+    "provider": "vscode-lm",
+    "model": "auto"
   }
 }
 ```
 
-**Best For:** Code-focused documentation, existing Copilot subscribers
+**Best For:** No API key setup, VS Code users, simple configuration
 
 #### **xAI Grok Integration**
 ```json
@@ -541,11 +519,11 @@ scribeverse generate --emergency-fallback
     "providers": [
       { "provider": "openai", "model": "gpt-4o-mini" },
       { "provider": "anthropic", "model": "claude-3-5-sonnet-20241022" },
-      { "provider": "vscode-extension" },
+      { "provider": "vscode-lm" },
       { "provider": "ollama", "model": "llama3.1:8b" }
     ],
     "primaryProvider": "openai",
-    "fallbackProviders": ["anthropic", "vscode-extension", "ollama"],
+    "fallbackProviders": ["anthropic", "vscode-lm", "ollama"],
     "enableFallback": true,
     "maxRetries": 3,
     "retryDelay": 1000,
@@ -561,9 +539,9 @@ scribeverse generate --emergency-fallback
 ⚠️  OpenAI API failed (503 Service Unavailable)
 🔄 Falling back to Anthropic Claude...
 ⚠️  Anthropic API failed (Rate limit exceeded)
-🔄 Falling back to VS Code extensions...
-✅ Using GitHub Copilot via VS Code
-📚 Generating documentation with GitHub Copilot...
+🔄 Falling back to VS Code Language Model...
+✅ Using VS Code LM API
+📚 Generating documentation with VS Code...
 ```
 
 **Complete AI Failure Recovery:**

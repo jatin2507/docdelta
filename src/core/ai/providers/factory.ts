@@ -2,22 +2,20 @@ import { AIProvider, AIProviderConfig, IAIProvider } from './base';
 import { OpenAIProvider } from './openai';
 import { AnthropicProvider } from './anthropic';
 import { GoogleGeminiProvider } from './google-gemini';
-import { GitHubCopilotProvider } from './github-copilot';
 import { OllamaProvider } from './ollama';
 import { LiteLLMProvider } from './litellm';
 import { GrokProvider } from './grok';
-import { VSCodeExtensionProvider } from './vscode-extension';
+import { VSCodeLMProvider } from './vscode-lm';
 
 export class AIProviderFactory {
   private static providers = new Map<AIProvider, new (config: AIProviderConfig) => IAIProvider>([
     [AIProvider.OPENAI, OpenAIProvider],
     [AIProvider.ANTHROPIC, AnthropicProvider],
     [AIProvider.GOOGLE_GEMINI, GoogleGeminiProvider],
-    [AIProvider.GITHUB_COPILOT, GitHubCopilotProvider],
     [AIProvider.OLLAMA, OllamaProvider],
     [AIProvider.LITELLM, LiteLLMProvider],
     [AIProvider.GROK, GrokProvider],
-    [AIProvider.VSCODE_EXTENSION, VSCodeExtensionProvider],
+    [AIProvider.VSCODE_LM, VSCodeLMProvider],
   ]);
 
   static create(config: AIProviderConfig): IAIProvider {
@@ -71,14 +69,6 @@ export class AIProviderFactory {
         isSpecializedForCode: false,
         description: 'Google Gemini 2.5, 2.0, and 1.5 models with multimodal capabilities',
       },
-      [AIProvider.GITHUB_COPILOT]: {
-        name: 'GitHub Copilot',
-        requiresApiKey: true,
-        supportedFeatures: ['code', 'embeddings', 'streaming'],
-        isLocal: false,
-        isSpecializedForCode: true,
-        description: 'GitHub Copilot models optimized for code generation and analysis',
-      },
       [AIProvider.OLLAMA]: {
         name: 'Ollama',
         requiresApiKey: false,
@@ -103,13 +93,13 @@ export class AIProviderFactory {
         isSpecializedForCode: true,
         description: 'xAI Grok models with real-time search and advanced reasoning capabilities',
       },
-      [AIProvider.VSCODE_EXTENSION]: {
+      [AIProvider.VSCODE_LM]: {
         name: 'VS Code Language Model',
         requiresApiKey: false,
-        supportedFeatures: ['text', 'code', 'streaming', 'integrated'],
+        supportedFeatures: ['text', 'code', 'streaming'],
         isLocal: false,
         isSpecializedForCode: true,
-        description: 'Direct integration with VS Code Language Model API (GPT-4o, Claude, Copilot)',
+        description: 'VS Code Language Model API integration (requires VS Code environment)',
       },
     };
 

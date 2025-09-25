@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { ParsedModule, Language } from '../../types';
+import { ParsedModule, Language, DocDeltaConfig } from '../../types';
 import { ParserFactory } from '../../core/parser';
 import { FileUtils } from '../../utils/file-utils';
 
@@ -76,9 +76,67 @@ export class FlowAnalyzer {
   private dependencyGraph: Map<string, Set<string>> = new Map();
   private projectRoot: string;
   private entryPoints: string[] = [];
+  private config: DocDeltaConfig;
 
-  constructor(projectRoot: string) {
+  constructor(projectRoot: string, config?: DocDeltaConfig) {
     this.projectRoot = path.resolve(projectRoot);
+    this.config = config || {
+      sourceDir: projectRoot,
+      outputDir: path.join(projectRoot, 'docs'),
+      include: ['**/*.{js,ts,jsx,tsx,py,go,rs,java,cpp,sql}'],
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/build/**',
+        '**/coverage/**',
+        '**/.nyc_output/**',
+        '**/venv/**',
+        '**/env/**',
+        '**/__pycache__/**',
+        '**/.pytest_cache/**',
+        '**/site-packages/**',
+        '**/.venv/**',
+        '**/virtualenv/**',
+        '**/*.pyc',
+        '**/*.pyo',
+        '**/*.pyd',
+        '**/.Python',
+        '**/.git/**',
+        '**/.svn/**',
+        '**/.hg/**',
+        '**/.bzr/**',
+        '**/.vscode/**',
+        '**/.idea/**',
+        '**/.vs/**',
+        '**/*.swp',
+        '**/*.swo',
+        '**/*~',
+        '**/.DS_Store',
+        '**/Thumbs.db',
+        '**/desktop.ini',
+        '**/.cache/**',
+        '**/tmp/**',
+        '**/temp/**',
+        '**/.tmp/**',
+        '**/.sass-cache/**',
+        '**/vendor/**',
+        '**/packages/**',
+        '**/libs/**',
+        '**/third_party/**',
+        '**/target/**',
+        '**/*.class',
+        '**/*.jar',
+        '**/bin/**',
+        '**/obj/**'
+      ],
+      ai: {
+        provider: 'openai',
+        apiKey: '',
+        model: 'gpt-4o-mini',
+        maxTokens: 4000,
+        temperature: 0.2
+      }
+    };
   }
 
   async analyzeProject(patterns?: string[]): Promise<ProjectFlow> {
@@ -156,7 +214,7 @@ export class FlowAnalyzer {
     ];
 
     for (const pattern of configPatterns) {
-      const files = await FileUtils.findFiles(this.projectRoot, [pattern], ['node_modules/**']);
+      const files = await FileUtils.findFiles(this.projectRoot, [pattern], this.config.exclude);
       structure.configFiles.push(...files);
     }
 
@@ -284,66 +342,8 @@ export class FlowAnalyzer {
 
     const files = await FileUtils.findFiles(
       this.projectRoot,
-      patterns || defaultPatterns,
-      [
-        // Node.js
-        '**/node_modules/**',
-        '**/dist/**',
-        '**/build/**',
-        '**/coverage/**',
-        '**/.nyc_output/**',
-
-        // Python
-        '**/venv/**',
-        '**/env/**',
-        '**/__pycache__/**',
-        '**/.pytest_cache/**',
-        '**/site-packages/**',
-        '**/.venv/**',
-        '**/virtualenv/**',
-        '**/*.pyc',
-        '**/*.pyo',
-        '**/*.pyd',
-
-        // Version Control
-        '**/.git/**',
-        '**/.svn/**',
-        '**/.hg/**',
-
-        // IDEs and Editors
-        '**/.vscode/**',
-        '**/.idea/**',
-        '**/.vs/**',
-        '**/*.swp',
-        '**/*.swo',
-
-        // OS Generated
-        '**/.DS_Store',
-        '**/Thumbs.db',
-
-        // Cache and temporary
-        '**/.cache/**',
-        '**/tmp/**',
-        '**/temp/**',
-        '**/.tmp/**',
-
-        // Dependencies
-        '**/vendor/**',
-        '**/packages/**',
-        '**/libs/**',
-        '**/third_party/**',
-
-        // Language specific
-        '**/target/**',
-        '**/bin/**',
-        '**/obj/**',
-        '**/gems/**',
-
-        // Logs and databases
-        '**/*.log',
-        '**/*.sqlite',
-        '**/*.db',
-      ]
+      patterns || this.config.include || defaultPatterns,
+      this.config.exclude
     );
 
     for (const file of files) {

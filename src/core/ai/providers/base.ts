@@ -2,11 +2,10 @@ export enum AIProvider {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
   GOOGLE_GEMINI = 'google-gemini',
-  GITHUB_COPILOT = 'github-copilot',
   OLLAMA = 'ollama',
   LITELLM = 'litellm',
   GROK = 'grok',
-  VSCODE_EXTENSION = 'vscode-extension',
+  VSCODE_LM = 'vscode-lm',
 }
 
 export interface AIProviderConfig {
@@ -33,9 +32,6 @@ export interface AIProviderConfig {
   proxyUrl?: string;
   streamingEnabled?: boolean;
 
-  // GitHub Copilot specific options
-  copilotAccessMethod?: 'api' | 'vscode' | 'language-server' | 'auto';
-  vscodeExtensionPath?: string; // Custom VS Code extensions directory
 }
 
 export interface AIResponse {

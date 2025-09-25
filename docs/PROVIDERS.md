@@ -1,6 +1,6 @@
 # AI Provider Configuration Guide
 
-ScribeVerse supports 7 major AI providers with 50+ models. This guide covers setup, configuration, and optimization for each provider.
+ScribeVerse supports 6 major AI providers with access to the latest models. This guide covers setup, configuration, and optimization for each provider.
 
 ## Overview
 
@@ -9,8 +9,8 @@ ScribeVerse supports 7 major AI providers with 50+ models. This guide covers set
 | **OpenAI** | Cloud | $$$ | Fast | Excellent | No | Vision, Embeddings, Code |
 | **Anthropic** | Cloud | $$$ | Medium | Excellent | No | Large context, Safety |
 | **Google Gemini** | Cloud | $$ | Fast | Very Good | No | Multimodal, Free tier |
-| **GitHub Copilot** | Cloud | $$ | Fast | Code-focused | No | VS Code integration |
 | **xAI Grok** | Cloud | $$$ | Medium | Very Good | No | Real-time search |
+| **VS Code LM** | IDE | Free* | Fast | Variable | No | VS Code integration |
 | **Ollama** | Local | Free | Variable | Good | Yes | Privacy, Customizable |
 | **LiteLLM** | Proxy | Variable | Variable | Variable | Optional | Unified API |
 
@@ -26,7 +26,6 @@ export OPENAI_API_KEY="sk-..."
 export ANTHROPIC_API_KEY="sk-ant-..."
 export GOOGLE_AI_API_KEY="AIza..."
 export XAI_API_KEY="xai-..."
-export GITHUB_TOKEN="ghp_..."
 
 # Optional
 export DOCDELTA_LOG_LEVEL="info"
@@ -40,7 +39,7 @@ Create `scribeverse.config.json`:
 {
   "ai": {
     "provider": "openai",
-    "model": "gpt-4o-mini",
+    "model": "latest",
     "maxTokens": 4000,
     "temperature": 0.2
   }
@@ -80,13 +79,12 @@ Create `scribeverse.config.json`:
 
 #### Available Models
 
-| Model | Context | Speed | Cost | Best For |
-|-------|---------|-------|------|----------|
-| `gpt-4o` | 128k | Fast | High | Complex analysis |
-| `gpt-4o-mini` | 128k | Very Fast | Low | General docs |
-| `gpt-4-turbo` | 128k | Medium | High | Detailed analysis |
-| `gpt-4` | 8k | Slow | High | High-quality docs |
-| `gpt-3.5-turbo` | 16k | Very Fast | Very Low | Simple docs |
+OpenAI provides access to their latest GPT models optimized for different use cases:
+- **Latest GPT-4o models**: Best performance and quality for complex documentation
+- **GPT-4o Mini**: Cost-effective option with excellent performance for most use cases
+- **Legacy models**: Available for compatibility but latest models are recommended
+
+Use `npm run validate-models openai` to see currently available models and their specifications.
 
 #### Optimization Tips
 
@@ -148,13 +146,13 @@ const results = await Promise.all(requests);
 
 #### Available Models
 
-| Model | Context | Speed | Cost | Best For |
-|-------|---------|-------|------|----------|
-| `claude-3-5-sonnet-20241022` | 200k | Medium | Medium | Balanced performance |
-| `claude-3-5-haiku-20241022` | 200k | Fast | Low | Quick documentation |
-| `claude-3-opus-20240229` | 200k | Slow | High | Highest quality |
-| `claude-3-sonnet-20240229` | 200k | Medium | Medium | General purpose |
-| `claude-3-haiku-20240307` | 200k | Fast | Low | Simple tasks |
+Anthropic offers Claude models with exceptional reasoning capabilities:
+- **Claude 3.5 Sonnet**: Latest balanced model with excellent performance
+- **Claude 3.5 Haiku**: Fast and efficient for quick documentation tasks
+- **Claude 3 Opus**: Highest quality model for complex analysis
+
+All models support 200k+ context windows for processing large codebases.
+Use `npm run validate-models anthropic` to see currently available models.
 
 #### Large Context Usage
 
@@ -208,12 +206,13 @@ const documentation = await provider.summarize({
 
 #### Available Models
 
-| Model | Context | Speed | Cost | Best For |
-|-------|---------|-------|------|----------|
-| `gemini-2.0-flash-exp` | 1M | Very Fast | Low | Latest features |
-| `gemini-1.5-pro` | 2M | Medium | Medium | Large contexts |
-| `gemini-1.5-flash` | 1M | Fast | Low | General docs |
-| `gemini-1.0-pro` | 32k | Medium | Low | Basic tasks |
+Google provides Gemini models with multimodal capabilities:
+- **Gemini 2.0 Flash**: Latest experimental model with cutting-edge features
+- **Gemini 1.5 Pro**: Best for large context processing (up to 2M tokens)
+- **Gemini 1.5 Flash**: Fast and efficient for general documentation
+
+All models support vision, text, and code processing with competitive pricing.
+Use `npm run validate-models google-gemini` to see currently available models.
 
 #### Free Tier Usage
 
@@ -239,70 +238,44 @@ const response = await provider.generateText(
 );
 ```
 
-### GitHub Copilot
+### VS Code Language Model
 
-**Best for**: Code-focused documentation, VS Code users
+**Best for**: Integrated development, using existing VS Code AI extensions
 
-#### Setup Options
+#### Setup Steps
 
-**Option 1: API Access**
-1. **GitHub Copilot Business/Enterprise**: Contact GitHub sales
-2. **Set Token**: `GITHUB_TOKEN=ghp_...`
-
-**Option 2: VS Code Extension**
-1. **Install**: GitHub Copilot extension in VS Code
-2. **Sign In**: With GitHub Copilot subscription
+1. **Install VS Code AI Extension**: Choose from GitHub Copilot, Claude, Continue, etc.
+2. **Configure Extension**: Follow the extension's authentication process
+3. **Enable Language Model API**: Ensure the extension supports VS Code's Language Model API
 
 #### Configuration
 
 ```json
 {
   "ai": {
-    "provider": "github-copilot",
-    "githubToken": "ghp_...",
-    "model": "gpt-4",
-    "copilotAccessMethod": "auto",
-    "vscodeExtensionPath": "/custom/path/.vscode/extensions",
-    "maxTokens": 2000,
+    "provider": "vscode-lm",
+    "model": "auto",
+    "maxTokens": 4000,
     "temperature": 0.2
   }
 }
 ```
 
-#### Access Methods
+#### Available Models
 
-| Method | Requirements | Features |
-|--------|-------------|----------|
-| `api` | API key/token | Full programmatic access |
-| `vscode` | VS Code + extension | Native integration |
-| `language-server` | Copilot Language Server | Local server |
-| `auto` | Automatic detection | Best available method |
+VS Code Language Model API provides access to models from various providers:
+- **Auto-detection**: Automatically uses available models from installed extensions
+- **Provider flexibility**: Works with GitHub Copilot, Claude, Continue, Codeium, etc.
+- **No separate API keys**: Uses existing VS Code extension authentication
 
-#### VS Code Integration
+Use `npm run validate-models vscode-lm` to detect available models in your VS Code environment.
 
-```typescript
-const provider = new GitHubCopilotProvider({
-  provider: 'github-copilot',
-  copilotAccessMethod: 'vscode'
-});
+#### Benefits
 
-// Code-specific methods
-const suggestion = await provider.generateCodeSuggestion(
-  'function authenticate',
-  'typescript'
-);
-
-const explanation = await provider.explainCode(
-  'const user = await User.findById(id);',
-  'typescript'
-);
-
-const tests = await provider.generateTests(
-  functionCode,
-  'typescript',
-  'jest'
-);
-```
+- **No additional setup**: Uses existing VS Code AI extensions
+- **Seamless integration**: Works within your existing development environment
+- **Multiple providers**: Access different AI models through one interface
+- **Cost-effective**: Uses your existing extension subscriptions
 
 ### xAI Grok
 
@@ -333,13 +306,13 @@ const tests = await provider.generateTests(
 
 #### Available Models
 
-| Model | Features | Best For |
-|-------|----------|----------|
-| `grok-4` | Latest, most capable | Complex analysis |
-| `grok-4-fast` | Optimized speed | Quick docs |
-| `grok-3-beta` | Balanced performance | General use |
-| `grok-3-mini` | With reasoning effort | Specialized tasks |
-| `grok-code-fast-1` | Code-specialized | Code analysis |
+xAI provides Grok models with unique capabilities:
+- **Latest Grok models**: State-of-the-art reasoning and analysis capabilities
+- **Fast variants**: Optimized for speed while maintaining quality
+- **Code-specialized models**: Specifically trained for software development tasks
+- **Reasoning modes**: Advanced cognitive capabilities for complex problems
+
+Use `npm run validate-models xai-grok` to see currently available models and their specifications.
 
 #### Special Features
 
@@ -407,15 +380,15 @@ ollama pull mistral:7b
 ollama rm unused-model
 ```
 
-#### Recommended Models
+#### Popular Models
 
-| Model | Size | RAM | Speed | Best For |
-|-------|------|-----|--------|----------|
-| `llama3.2:1b` | 1.3GB | 4GB | Fast | Simple docs |
-| `llama3.2:3b` | 2GB | 8GB | Medium | General docs |
-| `codellama:7b` | 3.8GB | 8GB | Medium | Code analysis |
-| `mistral:7b` | 4.1GB | 8GB | Medium | Balanced |
-| `qwen2.5:7b` | 4.4GB | 8GB | Medium | Multilingual |
+Ollama provides access to many open-source models:
+- **Llama models**: Latest versions with excellent performance
+- **Code-specialized models**: CodeLlama, DeepSeek Coder, Qwen Coder
+- **Lightweight options**: Smaller models for resource-constrained environments
+- **Multilingual models**: Support for various languages and use cases
+
+Use `npm run validate-models ollama` to see currently available models and their requirements.
 
 #### Custom Model Configuration
 

@@ -59,7 +59,11 @@ export class ParserFactory {
     }
   }
 
-  static async parseDirectory(dirPath: string, patterns?: string[]): Promise<ParsedModule[]> {
+  static async parseDirectory(
+    dirPath: string,
+    patterns?: string[],
+    excludePatterns?: string[]
+  ): Promise<ParsedModule[]> {
     const { globby } = await import('globby');
     const defaultPatterns = [
       '**/*.ts',
@@ -70,10 +74,28 @@ export class ParserFactory {
       '**/*.sql',
     ];
 
+    const defaultExclude = [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/venv/**',
+      '**/env/**',
+      '**/__pycache__/**',
+      '**/.venv/**',
+      '**/virtualenv/**',
+      '**/*.pyc',
+      '**/*.pyo',
+      '**/*.pyd',
+      '**/.git/**',
+      '**/.svn/**',
+      '**/.hg/**',
+      '**/.bzr/**'
+    ];
+
     const files = await globby(patterns || defaultPatterns, {
       cwd: dirPath,
       absolute: true,
-      ignore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
+      ignore: excludePatterns || defaultExclude,
     });
 
     const results = await Promise.all(files.map((file) => this.parseFile(file)));

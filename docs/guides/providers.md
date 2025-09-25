@@ -27,11 +27,10 @@
 
 | Provider | Best For | Cost | API Key | Setup Difficulty |
 |----------|----------|------|---------|------------------|
-| **VS Code Extensions** | No API keys, instant setup | Free | ❌ | ⭐ Easy |
+| **VS Code LM API** | No API keys, instant setup | Free | ❌ | ⭐ Easy |
 | **OpenAI** | Fast, reliable documentation | $$ | ✅ | ⭐⭐ Medium |
 | **Google Gemini** | Free tier, good quality | $ | ✅ | ⭐⭐ Medium |
 | **Anthropic Claude** | Large codebases, detailed analysis | $$$ | ✅ | ⭐⭐ Medium |
-| **GitHub Copilot** | Code-specialized, VS Code users | $$ | ✅ | ⭐⭐⭐ Hard |
 | **Ollama** | Local, privacy-focused | Free | ❌ | ⭐⭐⭐ Hard |
 | **xAI Grok** | Real-time features | $$ | ✅ | ⭐⭐ Medium |
 | **LiteLLM** | Multi-provider proxy | Variable | ✅ | ⭐⭐⭐ Hard |
@@ -40,32 +39,30 @@
 
 ## 🔧 Setup Guides
 
-### 🔌 VS Code Extensions (Recommended for Beginners)
+### 🔌 VS Code Language Model API (Recommended for Beginners)
 
-**No API key required! Uses your existing VS Code AI extensions.**
+**No API key required! Uses your existing VS Code AI extensions through the Language Model API.**
 
 ```bash
-# Auto-detect VS Code extensions
-scribeverse generate --use-vscode
+# Auto-detect VS Code LM capabilities
+scribeverse generate --provider vscode-lm
 
 # Or configure permanently
-scribeverse init --provider vscode-extension
+scribeverse init --provider vscode-lm
 ```
 
-**Supported Extensions:**
-- GitHub Copilot
-- Claude for VS Code
-- Continue
-- Codeium
-- TabNine
+**Requirements:**
+- VS Code with Language Model API support
+- Compatible AI extension installed
+- No additional API keys needed
 
 **Configuration:**
 ```json
 {
   "ai": {
-    "provider": "vscode-extension",
-    "useVSCodeExtensions": true,
-    "preferVSCodeExtensions": true
+    "provider": "vscode-lm",
+    "model": "auto",
+    "maxTokens": 4000
   }
 }
 ```
@@ -158,20 +155,20 @@ scribeverse init --provider vscode-extension
 - **gemini-1.5-pro** - Higher quality for complex docs
 - **gemini-1.5-flash** - Good balance of speed and cost
 
-### 🐙 GitHub Copilot
+### 🧪 xAI Grok
 
-**Best for: Code-focused documentation, existing Copilot users**
+**Best for: Advanced reasoning, real-time capabilities**
 
 #### Setup Steps
-1. **GitHub Copilot Subscription**: Ensure you have an active subscription
-2. **Get Token**: Generate a token with Copilot access
+1. **Get API Key**: Visit [x.ai/api](https://x.ai/api)
+2. **Set Environment Variable**: `XAI_API_KEY=xai-...`
 3. **Configure ScribeVerse**:
    ```json
    {
      "ai": {
-       "provider": "github-copilot",
-       "apiKey": "your-github-token",
-       "model": "gpt-4"
+       "provider": "xai-grok",
+       "apiKey": "${XAI_API_KEY}",
+       "model": "latest"
      }
    }
    ```
@@ -199,10 +196,12 @@ scribeverse init --provider vscode-extension
    }
    ```
 
-#### Recommended Models
-- **llama3.1:8b** - Best general purpose model
-- **codellama:7b** - Specialized for code documentation
-- **mistral:7b** - Good alternative, faster
+#### Model Selection
+- **Latest Llama models** - State-of-the-art open-source performance
+- **Code-specialized models** - CodeLlama, DeepSeek Coder for software projects
+- **Efficient variants** - Smaller models for resource-constrained environments
+
+Run `ollama list` to see installed models or `npm run validate-models ollama` for recommendations.
 
 ### 🧪 xAI Grok
 
@@ -307,7 +306,7 @@ scribeverse init --provider vscode-extension
 |--------------------|---------------|-----|
 | **API Documentation** | OpenAI | Excellent at structured output |
 | **Architecture Docs** | Anthropic | Better at high-level reasoning |
-| **Code Comments** | GitHub Copilot | Code-specialized |
+| **Code Comments** | VS Code LM | IDE-integrated |
 | **Database Docs** | Google Gemini | Good at structured data |
 | **Tutorial Content** | Anthropic | Excellent explanations |
 
@@ -315,10 +314,10 @@ scribeverse init --provider vscode-extension
 
 | Budget | Strategy | Configuration |
 |--------|----------|---------------|
-| **Free** | VS Code + Ollama | Use extensions + local models |
-| **Low ($10/month)** | OpenAI gpt-4o-mini | Cost-effective option |
-| **Medium ($50/month)** | OpenAI gpt-4o | Higher quality |
-| **High ($100+/month)** | Multi-provider | Best reliability and quality |
+| **Free** | VS Code LM + Ollama | Use IDE integration + local models |
+| **Low ($10/month)** | OpenAI latest mini | Cost-effective cloud option |
+| **Medium ($50/month)** | OpenAI + Anthropic | Higher quality multi-provider |
+| **High ($100+/month)** | Multi-provider setup | Best reliability and quality |
 
 ---
 

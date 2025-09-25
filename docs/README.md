@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Documentation](https://img.shields.io/badge/Documentation-Complete-brightgreen?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-1.1.8-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-1.1.10-blue?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
 **Comprehensive guides, references, and examples for ScribeVerse**
@@ -170,8 +170,7 @@ ScribeVerse supports 8 major AI providers with 60+ models:
 | **OpenAI** | [Setup →](./guides/providers.md#openai) | General docs, fast generation | $$ |
 | **Anthropic** | [Setup →](./guides/providers.md#anthropic) | Large codebases, analysis | $$$ |
 | **Google Gemini** | [Setup →](./guides/providers.md#google) | Free tier, multimodal | $ |
-| **VS Code Extensions** | [Setup →](./guides/vscode-integration.md) | No API keys needed | Free |
-| **GitHub Copilot** | [Setup →](./guides/providers.md#github) | Code-focused | $$ |
+| **VS Code Language Model** | [Setup →](./guides/vscode-integration.md) | No API keys needed | Free |
 | **xAI Grok** | [Setup →](./guides/providers.md#xai) | Real-time features | $$ |
 | **Ollama** | [Setup →](./guides/providers.md#ollama) | Local, privacy-focused | Free |
 | **LiteLLM** | [Setup →](./guides/providers.md#litellm) | Multi-provider proxy | Variable |
@@ -212,7 +211,7 @@ ScribeVerse supports 8 major AI providers with 60+ models:
 ## 📈 What's New
 
 ### Recent Additions
-- **[VS Code Integration Guide](./guides/vscode-integration.md)** - New in v1.1.8
+- **[VS Code Integration Guide](./guides/vscode-integration.md)** - Enhanced Language Model API support
 - **[Visual Diagrams Guide](./guides/diagrams.md)** - Updated with new features
 - **[Performance Optimization](./advanced/performance.md)** - Advanced tuning tips
 - **[Security Best Practices](./advanced/security.md)** - API key management

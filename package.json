@@ -1,6 +1,6 @@
 {
   "name": "scribeverse",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "type": "commonjs",
   "description": "Multi-language documentation tool with incremental updates and AI-powered summaries",
   "main": "dist/index.js",
@@ -20,7 +20,9 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run test && npm run lint && npm run build"
+    "prepublishOnly": "npm run test && npm run lint && npm run build",
+    "install-provider": "node scripts/install-provider.js",
+    "validate-models": "node scripts/validate-models.js"
   },
   "keywords": [
     "scribeverse",
@@ -38,13 +40,6 @@
     "incremental",
     "git",
     "markdown",
-    "openai",
-    "anthropic",
-    "claude",
-    "gpt",
-    "gemini",
-    "copilot",
-    "ollama",
     "mermaid",
     "diagrams",
     "flowcharts",
@@ -69,7 +64,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.5.2",
+    "@types/node": "^24.7.3",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
     "eslint": "^9.36.0",
@@ -81,14 +76,10 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@ai-sdk/xai": "^2.0.22",
-    "@anthropic-ai/sdk": "^0.63.0",
     "@babel/parser": "^7.28.4",
     "@babel/traverse": "^7.28.4",
     "@babel/types": "^7.28.4",
-    "@github/copilot-language-server": "^1.374.0",
-    "@google/generative-ai": "^0.24.1",
-    "ai": "^5.0.51",
+    "ai": "^5.0.52",
     "better-sqlite3": "^12.4.1",
     "chalk": "^5.6.2",
     "commander": "^14.0.1",
@@ -98,18 +89,51 @@
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.2",
     "globby": "^14.1.0",
-    "litellm": "^0.12.0",
     "marked": "^16.3.0",
     "mermaid": "^11.12.0",
-    "ollama": "^0.5.18",
-    "openai": "^5.22.1",
     "ora": "^9.0.0",
     "simple-git": "^3.28.0",
     "yaml": "^2.8.1",
     "zod": "^3.25.76"
   },
   "optionalDependencies": {
-    "@mermaid-js/mermaid-cli": "^11.4.0",
-    "puppeteer": "^21.0.0"
+    "@mermaid-js/mermaid-cli": "^11.10.1",
+    "puppeteer": "^24.22.3"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": "^0.63.1",
+    "@google/genai": "^0.3.1",
+    "@ai-sdk/xai": "^2.0.22",
+    "openai": "^5.23.0",
+    "ollama": "^0.6.0",
+    "litellm": "^0.12.0"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "@google/genai": {
+      "optional": true
+    },
+    "@ai-sdk/xai": {
+      "optional": true
+    },
+    "openai": {
+      "optional": true
+    },
+    "ollama": {
+      "optional": true
+    },
+    "litellm": {
+      "optional": true
+    }
+  },
+  "providerDependencies": {
+    "openai": ["openai"],
+    "anthropic": ["@anthropic-ai/sdk"],
+    "google-gemini": ["@google/genai"],
+    "xai-grok": ["@ai-sdk/xai"],
+    "ollama": ["ollama"],
+    "litellm": ["litellm"]
   }
 }

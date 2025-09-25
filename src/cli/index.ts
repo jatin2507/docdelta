@@ -12,6 +12,8 @@ import { MetadataManager } from '../core/metadata';
 import { FlowAnalyzer } from '../core/analyzer/flow-analyzer';
 import { AIOptimizedDocGenerator } from '../core/generator/ai-optimized-generator';
 import { CrossPlatform } from '../utils/cross-platform';
+import { ProviderDetector } from '../utils/provider-detector';
+import { DependencyManager } from '../utils/dependency-manager';
 
 const packageJson = require('../../package.json');
 const version = packageJson.version;
@@ -22,6 +24,43 @@ program
   .name('scribeverse')
   .description('Multi-language documentation tool with incremental updates and AI-powered summaries')
   .version(version);
+
+program
+  .command('check-providers')
+  .alias('providers')
+  .description('Check AI provider dependencies status')
+  .action(async () => {
+    const spinner = ora('Checking provider status...').start();
+
+    try {
+      const config = ConfigManager.getInstance();
+      const currentConfig = config.getConfig();
+
+      spinner.stop();
+      console.log(chalk.blue('\n🔍 ScribeVerse Provider Status'));
+      console.log(chalk.blue('═'.repeat(50)));
+
+      await ProviderDetector.showProviderStatus(currentConfig);
+
+      console.log(chalk.blue('\n📋 Available Commands:'));
+      console.log(chalk.gray('  scribeverse generate    - Auto-install and generate docs'));
+      console.log(chalk.gray('  scribeverse ai-generate - AI-optimized documentation'));
+
+      console.log(chalk.blue('\n🔧 Manual Installation:'));
+      const availableProviders = DependencyManager.getAvailableProviders();
+      for (const provider of availableProviders) {
+        const info = DependencyManager.getProviderInfo(provider);
+        if (info) {
+          console.log(chalk.gray(`  ${provider}: npm install -g ${info.packages.join(' ')}`));
+        }
+      }
+
+    } catch (error) {
+      spinner.fail('Failed to check provider status');
+      console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+      process.exit(1);
+    }
+  });
 
 program
   .command('generate')
@@ -57,6 +96,18 @@ program
         }
       });
 
+      // Auto-detect and install AI provider dependencies
+      spinner.text = 'Checking AI provider dependencies...';
+      const mergedConfig = config.getConfig();
+      const dependencySuccess = await ProviderDetector.detectAndInstallDependencies(mergedConfig);
+      if (!dependencySuccess) {
+        spinner.fail('Failed to install required AI provider dependencies');
+        console.log(chalk.yellow('\n💡 You can continue with limited functionality or install dependencies manually'));
+        // Don't exit, allow user to continue
+      } else {
+        spinner.succeed('AI provider dependencies verified');
+      }
+
       const configErrors = config.validateConfig();
       if (configErrors.length > 0) {
         spinner.fail('Configuration errors:');
@@ -65,7 +116,7 @@ program
       }
 
       spinner.text = 'Parsing source files...';
-      const modules = await ParserFactory.parseDirectory(options.source, options.include);
+      const modules = await ParserFactory.parseDirectory(options.source, options.include, options.exclude);
       spinner.succeed(`Parsed ${modules.length} modules`);
 
       spinner.start('Initializing metadata manager...');
@@ -126,6 +177,8 @@ program
   .description('Incrementally update documentation based on code changes')
   .option('-s, --source <path>', 'Source directory path', process.cwd())
   .option('-o, --output <path>', 'Output directory for documentation', './docs')
+  .option('-i, --include <patterns...>', 'File patterns to include')
+  .option('-e, --exclude <patterns...>', 'File patterns to exclude')
   .option('--force', 'Force update all documentation')
   .action(async (options) => {
     const spinner = ora('Checking for changes...').start();
@@ -141,7 +194,7 @@ program
       await metadataManager.initialize();
 
       spinner.text = 'Parsing source files...';
-      const modules = await ParserFactory.parseDirectory(options.source);
+      const modules = await ParserFactory.parseDirectory(options.source, options.include, options.exclude);
       const allChunks = modules.flatMap((m) => m.chunks);
 
       spinner.text = 'Detecting changes...';
@@ -396,14 +449,33 @@ program
       const sourceDir = CrossPlatform.resolvePath(options.source);
       const outputDir = CrossPlatform.resolvePath(options.output);
 
+      // Create config object with current options
+      const aiConfig = {
+        sourceDir,
+        outputDir,
+        include: options.include,
+        exclude: options.exclude,
+        ai: ConfigManager.getInstance().getConfig().ai
+      };
+
+      // Auto-detect and install AI provider dependencies
+      spinner.text = 'Checking AI provider dependencies...';
+      const dependencySuccess = await ProviderDetector.detectAndInstallDependencies(aiConfig);
+      if (!dependencySuccess) {
+        spinner.fail('Failed to install required AI provider dependencies');
+        console.log(chalk.yellow('\n💡 You can continue with limited functionality or install dependencies manually'));
+      } else {
+        spinner.succeed('AI provider dependencies verified');
+      }
+
       spinner.text = 'Analyzing project structure and entry points...';
-      const flowAnalyzer = new FlowAnalyzer(sourceDir);
+      const flowAnalyzer = new FlowAnalyzer(sourceDir, aiConfig);
       const projectFlow = await flowAnalyzer.analyzeProject(options.include);
 
       spinner.succeed(`Found ${projectFlow.entryPoints.length} entry points and ${projectFlow.modules.size} modules`);
 
       spinner.start('Parsing all modules...');
-      const modules = await ParserFactory.parseDirectory(sourceDir, options.include);
+      const modules = await ParserFactory.parseDirectory(sourceDir, options.include, options.exclude);
       const moduleMap = new Map(modules.map(m => [m.path, m]));
       spinner.succeed(`Parsed ${modules.length} modules`);
 
