@@ -321,6 +321,10 @@ export class ConfigManager {
             errors.push('VS Code extension provider requires VS Code to be installed and accessible.');
           }
           break;
+        case 'vscode-lm':
+          // VSCode Language Model doesn't require an API key
+          // It uses the built-in VS Code Language Model API when running within VS Code
+          break;
         default:
           errors.push(`AI API key is required for provider: ${provider}. Please add it to your config file.`);
       }

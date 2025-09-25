@@ -26,6 +26,77 @@ program
   .version(version);
 
 program
+  .command('list')
+  .description('List available AI providers and models')
+  .option('-m, --model <provider>', 'List available models for a specific provider')
+  .action(async (options) => {
+    const spinner = ora('Loading provider information...').start();
+
+    try {
+      if (options.model) {
+        // List models for specific provider
+        const { AIProviderFactory } = await import('../core/ai/providers/factory');
+        spinner.text = `Loading models for ${options.model}...`;
+
+        try {
+          const provider = await AIProviderFactory.create({
+            provider: options.model,
+            model: 'default',
+            apiKey: 'dummy-key-for-model-list'
+          });
+
+          const models = await provider.getModelList();
+          spinner.succeed(`Found ${models.length} models for ${options.model}`);
+
+          console.log(chalk.blue(`\n🤖 Available Models for ${options.model}:`));
+          console.log(chalk.blue('═'.repeat(50)));
+
+          models.forEach((model: string) => {
+            console.log(chalk.cyan(`  • ${model}`));
+          });
+
+          console.log(chalk.gray(`\n💡 Use: scribeverse generate --model ${models[0] || 'model-name'}`));
+
+        } catch {
+          spinner.fail(`Failed to load models for ${options.model}`);
+          console.error(chalk.red(`Provider '${options.model}' not available or not configured.`));
+          console.log(chalk.yellow('\nAvailable providers: openai, anthropic, google-gemini, ollama, vscode-lm, litellm, xai-grok'));
+          process.exit(1);
+        }
+      } else {
+        // List all providers
+        const config = ConfigManager.getInstance();
+        const currentConfig = config.getConfig();
+
+        spinner.stop();
+        console.log(chalk.blue('\n🔍 ScribeVerse AI Providers'));
+        console.log(chalk.blue('═'.repeat(50)));
+
+        await ProviderDetector.showProviderStatus(currentConfig);
+
+        console.log(chalk.blue('\n📋 Available Commands:'));
+        console.log(chalk.gray('  scribeverse list --model <provider>  - List models for provider'));
+        console.log(chalk.gray('  scribeverse generate                 - Auto-install and generate docs'));
+        console.log(chalk.gray('  scribeverse ai-flow                  - AI-optimized documentation'));
+
+        console.log(chalk.blue('\n🔧 Manual Installation:'));
+        const availableProviders = DependencyManager.getAvailableProviders();
+        for (const provider of availableProviders) {
+          const info = DependencyManager.getProviderInfo(provider);
+          if (info) {
+            console.log(chalk.gray(`  ${provider}: npm install ${info.packages.join(' ')}`));
+          }
+        }
+      }
+
+    } catch (error) {
+      spinner.fail('Failed to load provider information');
+      console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+      process.exit(1);
+    }
+  });
+
+program
   .command('check-providers')
   .alias('providers')
   .description('Check AI provider dependencies status')

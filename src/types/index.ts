@@ -171,6 +171,7 @@ export interface GeneratedFile {
   module?: string; // Reference to the source module
   crossReferences?: string[]; // List of related files
   tags?: string[]; // File categorization tags
+  metadata?: any; // Additional metadata for specialized file types
 }
 
 export interface GenerationStats {

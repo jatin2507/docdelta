@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Documentation](https://img.shields.io/badge/Documentation-Complete-brightgreen?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-1.1.10-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-1.1.11-blue?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
 **Comprehensive guides, references, and examples for ScribeVerse**
@@ -41,6 +41,7 @@ Essential information to get you up and running quickly.
 Step-by-step guides for common tasks and workflows.
 
 - **[🤖 AI Providers](./guides/providers.md)** - Complete provider setup and comparison
+- **[📚 Interactive Textbook](./guides/interactive-textbook.md)** - 🆕 Generate structured learning documentation
 - **[🎨 Visual Diagrams](./guides/diagrams.md)** - Generate and customize visual documentation
 - **[🔌 VS Code Integration](./guides/vscode-integration.md)** - Use ScribeVerse with VS Code extensions
 - **[🌐 Multi-Language](./guides/multi-language.md)** - Document TypeScript, Python, SQL, and more
@@ -51,6 +52,7 @@ Step-by-step guides for common tasks and workflows.
 Detailed technical references and API documentation.
 
 - **[📋 CLI Reference](./reference/cli.md)** - Complete command-line interface documentation
+- **[🔍 Model Discovery](./reference/model-discovery.md)** - 🆕 Dynamic AI model listing and validation
 - **[🔧 API Reference](./reference/api.md)** - Programmatic usage and SDK reference
 - **[⚙️ Configuration Reference](./reference/configuration.md)** - All configuration options explained
 - **[🎯 Model Registry](./reference/models.md)** - AI models and provider capabilities
@@ -88,10 +90,11 @@ Solutions for common problems and error messages.
 ## 🎯 Popular Topics
 
 ### Most Viewed Guides
-1. **[Provider Setup Guide](./guides/providers.md)** - Configure your AI provider
-2. **[VS Code Integration](./guides/vscode-integration.md)** - Use without API keys
-3. **[Visual Diagrams](./guides/diagrams.md)** - Generate beautiful diagrams
-4. **[CI/CD Integration](./guides/cicd.md)** - Automate documentation
+1. **[Interactive Textbook Guide](./guides/interactive-textbook.md)** - 🆕 Structured learning documentation
+2. **[Provider Setup Guide](./guides/providers.md)** - Configure your AI provider
+3. **[VS Code Integration](./guides/vscode-integration.md)** - Use without API keys
+4. **[Visual Diagrams](./guides/diagrams.md)** - Generate beautiful diagrams
+5. **[CI/CD Integration](./guides/cicd.md)** - Automate documentation
 
 ### Quick Reference Cards
 - **[📋 CLI Commands](./reference/cli.md#command-quick-reference)** - All commands at a glance
@@ -210,11 +213,13 @@ ScribeVerse supports 8 major AI providers with 60+ models:
 
 ## 📈 What's New
 
-### Recent Additions
+### Recent Additions (v1.1.11)
+- **🆕 Interactive Textbook Documentation** - Structured learning-oriented documentation generation
+- **🆕 Dynamic Model Listing** - Real-time AI model discovery with `scribeverse list --model <provider>`
+- **🆕 Enhanced Interactive Diagrams** - Zoomable, interactive HTML diagram generation
+- **🆕 Improved Provider Compatibility** - Better error handling and fallback systems
 - **[VS Code Integration Guide](./guides/vscode-integration.md)** - Enhanced Language Model API support
-- **[Visual Diagrams Guide](./guides/diagrams.md)** - Updated with new features
-- **[Performance Optimization](./advanced/performance.md)** - Advanced tuning tips
-- **[Security Best Practices](./advanced/security.md)** - API key management
+- **[Visual Diagrams Guide](./guides/diagrams.md)** - Updated with interactive features
 
 ### Coming Soon
 - **Plugin Development Guide** - Create custom extensions

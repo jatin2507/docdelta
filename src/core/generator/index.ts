@@ -13,7 +13,8 @@ import {
 import { AIService } from '../../core/ai';
 import { ConfigManager } from '../../config';
 import { ModularDocumentationGenerator } from './modular-docs-generator';
-import { VisualDiagramGenerator } from './visual-diagram-generator';
+import { InteractiveDiagramGenerator } from './interactive-diagram-generator';
+import { NotebookStyleGenerator } from './notebook-style-generator';
 
 export class DocumentationGenerator {
   private config: DocDeltaConfig;
@@ -49,7 +50,7 @@ export class DocumentationGenerator {
     const startTime = Date.now();
     const sections: DocumentationSection[] = [];
     const files: GeneratedFile[] = [];
-    const totalSteps = 8; // Overview, Architecture, API, Database, Modules, ModularDocs, AST, WriteFiles
+    const totalSteps = 9; // Overview, Architecture, API, Database, Modules, ModularDocs, AST, Notebooks, WriteFiles
     let currentStep = 0;
 
     await fs.ensureDir(this.outputDir);
@@ -206,21 +207,20 @@ export class DocumentationGenerator {
         this.stats.errors.push(`Enhanced modular documentation failed: ${error instanceof Error ? error.message : String(error)}`);
       }
 
-      // Step 6: Generate Visual Diagrams (Always - Write Immediately with Bulletproof Fallback)
+      // Step 6: Generate Interactive Diagrams (Always - Write Immediately with Bulletproof Fallback)
       this.updateProgress('Generating visual diagrams and charts...', ++currentStep, totalSteps);
       try {
-        const visualGenerator = new VisualDiagramGenerator(this.outputDir);
-        await visualGenerator.initialize();
+        const diagramGenerator = new InteractiveDiagramGenerator(this.outputDir);
+        await diagramGenerator.initialize();
 
-        // Generate multiple types of visual diagrams
+        // Generate multiple types of interactive diagrams
         const diagramResults = [];
 
         // 1. Project Structure Diagram
         try {
-          const projectDiagram = await visualGenerator.generateProjectStructureDiagram(modules);
+          const projectDiagram = await diagramGenerator.generateProjectStructureDiagram(modules);
           if (projectDiagram.success) {
             diagramResults.push(projectDiagram);
-            console.log('✅ Project structure diagram generated successfully');
           }
         } catch (err) {
           console.warn(`⚠️ Project structure diagram failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -228,10 +228,9 @@ export class DocumentationGenerator {
 
         // 2. Dependency Graph Diagram
         try {
-          const depDiagram = await visualGenerator.generateDependencyDiagram(modules);
+          const depDiagram = await diagramGenerator.generateDependencyDiagram(modules);
           if (depDiagram.success) {
             diagramResults.push(depDiagram);
-            console.log('✅ Dependency graph diagram generated successfully');
           }
         } catch (err) {
           console.warn(`⚠️ Dependency diagram failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -239,63 +238,21 @@ export class DocumentationGenerator {
 
         // 3. System Architecture Diagram
         try {
-          const archDiagram = await visualGenerator.generateSystemArchitectureDiagram(modules);
+          const archDiagram = await diagramGenerator.generateSystemArchitectureDiagram(modules);
           if (archDiagram.success) {
             diagramResults.push(archDiagram);
-            console.log('✅ System architecture diagram generated successfully');
           }
         } catch (err) {
           console.warn(`⚠️ Architecture diagram failed: ${err instanceof Error ? err.message : String(err)}`);
         }
 
-        // 4. Database ER Diagram (if SQL files exist)
-        const sqlModules = modules.filter(m => m.language.toLowerCase() === 'sql');
-        if (sqlModules.length > 0) {
-          try {
-            const dbDiagram = await visualGenerator.generateDatabaseERDiagram(sqlModules);
-            if (dbDiagram.success) {
-              diagramResults.push(dbDiagram);
-              console.log('✅ Database ER diagram generated successfully');
-            }
-          } catch (err) {
-            console.warn(`⚠️ Database ER diagram failed: ${err instanceof Error ? err.message : String(err)}`);
-          }
-        }
-
-        // 5. Individual module diagrams for complex modules
-        const complexModules = modules.filter(m =>
-          m.chunks.filter(c => c.type === 'class' || c.type === 'function').length >= 5
-        );
-
-        for (const module of complexModules.slice(0, 5)) { // Limit to 5 most complex modules
-          try {
-            const classDiagram = await visualGenerator.generateClassDiagram(module);
-            if (classDiagram.success) {
-              diagramResults.push(classDiagram);
-              console.log(`✅ Class diagram for ${module.name} generated successfully`);
-            }
-          } catch (err) {
-            console.warn(`⚠️ Class diagram for ${module.name} failed: ${err instanceof Error ? err.message : String(err)}`);
-          }
-
-          try {
-            const flowDiagram = await visualGenerator.generateFunctionFlowDiagram(module);
-            if (flowDiagram.success) {
-              diagramResults.push(flowDiagram);
-              console.log(`✅ Function flow diagram for ${module.name} generated successfully`);
-            }
-          } catch (err) {
-            console.warn(`⚠️ Function flow diagram for ${module.name} failed: ${err instanceof Error ? err.message : String(err)}`);
-          }
-        }
-
         // Create diagram index file
-        const diagramIndexContent = this.createDiagramIndexContent(diagramResults, modules);
+        const diagramIndexContent = this.createInteractiveDiagramIndex(diagramResults, modules);
         const diagramIndexFile = this.createFile('docs/diagrams.md', diagramIndexContent, DocType.DIAGRAM);
         await this.writeFileImmediately(diagramIndexFile);
         files.push(diagramIndexFile);
 
-        console.log(`✅ Generated ${diagramResults.length} visual diagrams successfully`);
+        console.log(`✅ Generated ${diagramResults.length} interactive diagrams successfully`);
 
       } catch (error) {
         console.warn(`⚠️ Visual diagram generation failed completely, creating text fallback...`);
@@ -313,7 +270,22 @@ export class DocumentationGenerator {
         this.stats.errors.push(`Visual diagram generation failed: ${error instanceof Error ? error.message : String(error)}`);
       }
 
-      // Step 7: Complete (Files Already Written)
+      // Step 7: Generate Notebook-Style Documentation (Interactive Textbook)
+      this.updateProgress('Generating interactive textbook documentation...', ++currentStep, totalSteps);
+      try {
+        const notebookGenerator = new NotebookStyleGenerator(this.aiService, this.outputDir);
+        const notebookFiles = await notebookGenerator.generateNotebookDocs(modules);
+        for (const notebookFile of notebookFiles) {
+          files.push(notebookFile);
+        }
+        console.log(`✅ Generated ${notebookFiles.length} notebook-style textbook files`);
+      } catch (error) {
+        console.warn(`⚠️ Notebook-style documentation generation failed, skipping...`);
+        console.error(`Notebook error: ${error instanceof Error ? error.message : String(error)}`);
+        this.stats.errors.push(`Notebook-style documentation failed: ${error instanceof Error ? error.message : String(error)}`);
+      }
+
+      // Step 8: Complete (Files Already Written)
       this.updateProgress(`Documentation generation complete! ${files.length} files generated.`, ++currentStep, totalSteps);
       console.log(`\n🎉 Documentation generation completed successfully!`);
       console.log(`📁 Generated ${files.length} files in ${this.outputDir}`);
@@ -1441,6 +1413,99 @@ ${failed.map(f => `- **${f.name}**: ${f.error || 'Unknown error'}`).join('\n')}
     };
   }
 
+  private createInteractiveDiagramIndex(diagramResults: any[], modules: ParsedModule[]): DocumentationSection {
+    const successful = diagramResults.filter(d => d.success);
+    const failed = diagramResults.filter(d => !d.success);
+
+    const content = `# 🎯 Interactive Diagrams & Charts
+
+## ✨ Overview
+
+This page contains interactive visual representations of your codebase structure, dependencies, and architecture generated automatically by ScribeVerse.
+
+### 📊 Generation Summary
+- **Interactive Diagrams Generated**: ${successful.length}
+- **Failed Attempts**: ${failed.length}
+- **Modules Analyzed**: ${modules.length}
+
+## 🌐 Available Interactive Diagrams
+
+${successful.map(diagram => {
+  const name = path.basename(diagram.htmlPath || 'diagram', '.html');
+  const diagramTitle = this.getInteractiveDiagramTitle(name);
+
+  return `### ${diagramTitle}
+
+**[🌐 Open Interactive Diagram](./diagrams/${path.basename(diagram.htmlPath || '')})**
+
+**Features:**
+- 🔍 Zoom in/out functionality
+- 🖱️ Pan and navigate
+- 💾 Download as SVG
+- 📱 Responsive design
+- 🌓 Light/dark theme
+
+**Mermaid Code:**
+\`\`\`mermaid
+${diagram.mermaidCode}
+\`\`\`
+
+---`;
+}).join('\n\n')}
+
+${failed.length > 0 ? `## ⚠️ Failed Diagrams
+
+The following diagrams could not be generated:
+${failed.map(f => `- **${f.name}**: ${f.error || 'Unknown error'}`).join('\n')}` : ''}
+
+## 💡 How to Use Interactive Diagrams
+
+1. **🖱️ Navigation**:
+   - Click and drag to pan around the diagram
+   - Use mouse wheel or zoom buttons to zoom in/out
+   - Middle-click or Ctrl+click to activate pan mode
+
+2. **🎨 Customization**:
+   - Toggle between light and dark themes
+   - Adjust zoom levels for better readability
+   - Download diagrams as SVG files for presentations
+
+3. **📱 Responsive Design**:
+   - Diagrams automatically adapt to your screen size
+   - Works on desktop, tablet, and mobile devices
+
+4. **🔄 Real-time Updates**:
+   - Diagrams update automatically when you regenerate documentation
+   - Always reflect the current state of your codebase
+
+## 🛠️ Technical Details
+
+- **Format**: Interactive HTML with embedded Mermaid.js
+- **Framework**: Mermaid.js v11+ with custom enhancements
+- **Browser Support**: All modern browsers (Chrome, Firefox, Safari, Edge)
+- **Generated**: ${new Date().toLocaleDateString()}
+- **Tool**: ScribeVerse Interactive Diagram Generator
+
+---
+
+*Interactive diagrams automatically generated and updated with each documentation build*`;
+
+    return {
+      id: 'interactive-diagrams-index',
+      type: DocType.DIAGRAM,
+      title: '🎯 Interactive Diagrams & Charts',
+      content,
+      children: [],
+      metadata: {
+        diagramCount: successful.length,
+        failedCount: failed.length,
+        moduleCount: modules.length,
+        timestamp: new Date().toISOString(),
+        type: 'interactive'
+      }
+    };
+  }
+
   private createTextDiagramFallback(modules: ParsedModule[]): DocumentationSection {
     const content = `# 📋 Text-Based Diagrams
 
@@ -1498,6 +1563,16 @@ ${this.createTextDependencyTree(modules)}
     };
 
     return titles[name] || name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  private getInteractiveDiagramTitle(name: string): string {
+    const titles: { [key: string]: string } = {
+      'project-structure': '🎯 Interactive Project Structure',
+      'dependency-graph': '🔗 Interactive Dependency Graph',
+      'system-architecture': '🏛️ Interactive System Architecture'
+    };
+
+    return titles[name] || `🎯 Interactive ${name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
   }
 
   private createTextProjectStructure(modules: ParsedModule[]): string {

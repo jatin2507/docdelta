@@ -84,7 +84,7 @@ OpenAI provides access to their latest GPT models optimized for different use ca
 - **GPT-4o Mini**: Cost-effective option with excellent performance for most use cases
 - **Legacy models**: Available for compatibility but latest models are recommended
 
-Use `npm run validate-models openai` to see currently available models and their specifications.
+Use `scribeverse list --model openai` to see currently available models and their specifications.
 
 #### Optimization Tips
 
@@ -152,7 +152,7 @@ Anthropic offers Claude models with exceptional reasoning capabilities:
 - **Claude 3 Opus**: Highest quality model for complex analysis
 
 All models support 200k+ context windows for processing large codebases.
-Use `npm run validate-models anthropic` to see currently available models.
+Use `scribeverse list --model anthropic` to see currently available models.
 
 #### Large Context Usage
 
@@ -212,7 +212,7 @@ Google provides Gemini models with multimodal capabilities:
 - **Gemini 1.5 Flash**: Fast and efficient for general documentation
 
 All models support vision, text, and code processing with competitive pricing.
-Use `npm run validate-models google-gemini` to see currently available models.
+Use `scribeverse list --model google-gemini` to see currently available models.
 
 #### Free Tier Usage
 
@@ -268,7 +268,7 @@ VS Code Language Model API provides access to models from various providers:
 - **Provider flexibility**: Works with GitHub Copilot, Claude, Continue, Codeium, etc.
 - **No separate API keys**: Uses existing VS Code extension authentication
 
-Use `npm run validate-models vscode-lm` to detect available models in your VS Code environment.
+Use `scribeverse list --model vscode-lm` to detect available models in your VS Code environment.
 
 #### Benefits
 
@@ -312,7 +312,7 @@ xAI provides Grok models with unique capabilities:
 - **Code-specialized models**: Specifically trained for software development tasks
 - **Reasoning modes**: Advanced cognitive capabilities for complex problems
 
-Use `npm run validate-models xai-grok` to see currently available models and their specifications.
+Use `scribeverse list --model xai-grok` to see currently available models and their specifications.
 
 #### Special Features
 
@@ -388,7 +388,7 @@ Ollama provides access to many open-source models:
 - **Lightweight options**: Smaller models for resource-constrained environments
 - **Multilingual models**: Support for various languages and use cases
 
-Use `npm run validate-models ollama` to see currently available models and their requirements.
+Use `scribeverse list --model ollama` to see currently available models and their requirements.
 
 #### Custom Model Configuration
 

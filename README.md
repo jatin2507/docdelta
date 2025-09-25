@@ -3,7 +3,7 @@
 <div align="center">
 
 ![ScribeVerse Logo](https://img.shields.io/badge/ScribeVerse-AI%20Documentation%20Generator-blue?style=for-the-badge&logo=typescript)
-![Version](https://img.shields.io/badge/version-1.1.10-green?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.1.11-green?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen?style=for-the-badge&logo=node.js)
 
@@ -24,10 +24,12 @@ ScribeVerse automatically analyzes your codebase and generates comprehensive doc
 - **🤖 AI-Powered Analysis** - Understands code context and relationships
 - **📦 Automatic Dependencies** - Installs AI provider SDKs automatically as needed
 - **📊 Visual Documentation** - Generates actual diagram images, not just text
+- **📚 Interactive Textbook** - Creates structured learning-oriented documentation
 - **🔌 VS Code Integration** - Works directly with VS Code Language Model API
 - **🛡️ Bulletproof Reliability** - Multiple fallback systems ensure 100% success
 - **🌐 Multi-Language Support** - TypeScript, Python, SQL, and more
 - **⚡ Smart Automation** - Incremental updates and intelligent processing
+- **🔍 Dynamic Model Listing** - Real-time AI model availability checking
 
 ---
 
@@ -292,8 +294,49 @@ docs/diagrams/
 └── auth-flow-chart.png            # Function flow
 ```
 
+### 📚 Interactive Textbook Documentation
+**Structured learning-oriented documentation that reads like a textbook**
+
+ScribeVerse generates comprehensive textbook-style documentation with proper chapters, learning objectives, and educational structure.
+
+```bash
+# Generate interactive textbook documentation
+scribeverse generate --textbook
+
+# View available AI models for any provider
+scribeverse list --model openai
+scribeverse list --model anthropic
+scribeverse list --model google-gemini
+```
+
+**Textbook Features:**
+- **📋 Table of Contents** - Complete navigation with learning paths
+- **📖 Structured Chapters** - Introduction → Getting Started → Architecture → Modules
+- **🎯 Learning Objectives** - Clear goals for each chapter
+- **💻 Interactive Examples** - Copy-paste ready code snippets
+- **🤖 AI Analysis** - Intelligent insights throughout
+- **🔗 Cross-References** - Links between related concepts
+- **📊 Live Statistics** - Real-time project metrics
+- **📱 Multiple Formats** - HTML, Jupyter Notebooks, and more
+
+**Generated Structure:**
+```
+docs/notebooks/
+├── index.html                      # Textbook cover and navigation
+├── 00-table-of-contents.html      # Complete chapter index
+├── 01-introduction.html           # Project overview and goals
+├── 02-getting-started.html        # Setup and installation guide
+├── 03-architecture.html           # System design and patterns
+├── 04-core-components.html        # Main application modules
+├── 05-services-and-apis.html      # Service layer documentation
+├── 06-data-and-models.html        # Data structures and models
+├── 07-utilities-and-helpers.html  # Helper functions and utilities
+├── 08-api-reference.html          # Complete API documentation
+└── 99-appendices.html             # Glossary and troubleshooting
+```
+
 ### 🧠 Comprehensive AI Provider Ecosystem
-**8 AI providers with 60+ models - choose what works best for your project**
+**7 AI providers with 50+ models - choose what works best for your project**
 
 ScribeVerse supports the largest variety of AI providers, from cloud-based to local, free to premium.
 
@@ -338,11 +381,13 @@ ScribeVerse supports the largest variety of AI providers, from cloud-based to lo
 ```
 
 **Available Models:**
+Use `scribeverse list --model google-gemini` to see current models:
 - `gemini-2.0-flash` - Latest, fastest model
 - `gemini-1.5-pro` - Higher quality for complex analysis
 - `gemini-1.5-flash` - Balanced speed and cost
 
 **Best For:** Free tier usage, multimodal content, cost-effective documentation
+**Note:** Currently in compatibility mode due to API changes. Alternative providers recommended.
 
 #### **VS Code Language Model Integration**
 ```json
@@ -965,8 +1010,17 @@ jobs:
 
 ## 🔧 Advanced Features
 
-### Model Validation & Cost Estimation
+### Model Discovery & Validation
 ```bash
+# List all available providers
+scribeverse list
+
+# List models for specific provider
+scribeverse list --model openai
+scribeverse list --model anthropic
+scribeverse list --model google-gemini
+scribeverse list --model ollama
+
 # Validate AI model
 scribeverse validate --model gpt-4o-mini --provider openai
 

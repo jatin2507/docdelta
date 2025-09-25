@@ -161,12 +161,17 @@ export class AIService {
       // Validate input
       const validatedRequest = this.validateSummarizationRequest(request);
 
+      // Validate that chunks array is not empty
+      if (validatedRequest.chunks.length === 0) {
+        throw new ValidationError('Cannot generate documentation from empty chunks array');
+      }
+
       const prompt = this.buildPrompt(validatedRequest);
       const systemPrompt = this.getSystemPrompt(validatedRequest.docType);
 
       // Validate generated content
       if (!prompt?.trim()) {
-        throw new ValidationError('Generated prompt is empty - no valid content to summarize');
+        throw new ValidationError('Cannot generate documentation prompt from provided chunks');
       }
 
       const providerRequest: ProviderSummarizationRequest = {
@@ -198,7 +203,12 @@ export class AIService {
       throw new ValidationError('Summarization request must be a valid object');
     }
 
-    const chunks = ValidationUtils.nonEmptyArray(request.chunks, 'chunks');
+    // Allow empty chunks array - we'll handle this gracefully
+    const chunks = request.chunks || [];
+    if (!Array.isArray(chunks)) {
+      throw new ValidationError('chunks must be an array');
+    }
+
     const validatedChunks: CodeChunk[] = [];
 
     chunks.forEach((chunk, index) => {
@@ -209,8 +219,9 @@ export class AIService {
       }
     });
 
-    if (validatedChunks.length === 0) {
-      throw new ValidationError('No valid chunks found in request');
+    // Instead of throwing an error, let the caller handle empty chunks with fallback behavior
+    if (validatedChunks.length === 0 && chunks.length > 0) {
+      console.warn('No valid chunks found after validation - this may result in limited documentation');
     }
 
     const docType = ValidationUtils.validDocType(request.docType, 'docType');
@@ -482,6 +493,7 @@ Generate diagrams that help AI understand system structure and behavior patterns
     return finalPrompt;
   }
 
+
   private parseResponse(
     content: string,
     docType: DocType,
@@ -641,8 +653,13 @@ Generate diagrams that help AI understand system structure and behavior patterns
     return ErrorUtils.withErrorHandling(async () => {
       await this.ensureInitialized();
 
+      // Validate that chunks array is not empty
+      if (!chunks || chunks.length === 0) {
+        throw new ValidationError('Cannot generate diagram from empty chunks array');
+      }
+
       // Validate inputs
-      const validChunks = ValidationUtils.nonEmptyArray(chunks, 'chunks');
+      const validChunks = chunks;
       const validDiagramTypes = ['flow', 'sequence', 'class', 'er'];
 
       if (!validDiagramTypes.includes(diagramType)) {

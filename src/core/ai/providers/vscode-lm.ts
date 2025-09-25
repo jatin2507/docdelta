@@ -12,40 +12,50 @@ export class VSCodeLMProvider extends BaseAIProvider {
 
   async isAvailable(): Promise<boolean> {
     try {
-      // Check if VS Code LM API is available
-      // This should be a simple check if the VS Code Language Model API is accessible
-      return typeof global !== 'undefined' &&
-             'vscode' in (global as any) &&
-             'lm' in ((global as any).vscode || {});
+      // Check if running in VS Code environment
+      return process.env.VSCODE_PID !== undefined ||
+             process.env.TERM_PROGRAM === 'vscode' ||
+             typeof process.env.VSCODE_IPC_HOOK !== 'undefined' ||
+             typeof process.env.VSCODE_IPC_HOOK_CLI !== 'undefined';
     } catch {
       return false;
     }
   }
 
   async initialize(): Promise<void> {
+    // For VSCode LM, we don't need to validate API keys
+    // Just check if we're in the right environment
     const available = await this.isAvailable();
     if (!available) {
-      throw new Error('VS Code Language Model API is not available. Please run this from within VS Code with Language Model extensions.');
+      console.warn('VS Code Language Model API: Not running in VS Code environment. This provider will work only within VS Code.');
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async generateText(_prompt: string, _systemPrompt?: string): Promise<AIResponse> {
-    try {
-      if (!this.isAvailable()) {
-        throw new Error('VS Code LM API not available');
-      }
+    const available = await this.isAvailable();
 
-      // This would be implemented when running inside VS Code with LM API
-      // For now, throw an error with instructions
+    if (!available) {
       throw new Error(
-        'VS Code LM API integration requires running within VS Code environment. ' +
-        'Please use a different provider or run from VS Code with Language Model API support.'
+        'VS Code Language Model API is not available. ' +
+        'This provider only works when running ScribeVerse from within VS Code with Language Model extensions installed. ' +
+        'Please either:\n' +
+        '1. Run ScribeVerse from VS Code terminal, or\n' +
+        '2. Use a different AI provider (like OpenAI, Anthropic, or Google Gemini)\n' +
+        '3. Configure an alternative provider in your .env file'
       );
-
-    } catch (error) {
-      throw new Error(`VS Code LM generation failed: ${error instanceof Error ? error.message : String(error)}`);
     }
+
+    // This would be implemented when the VS Code LM API is properly integrated
+    // For now, provide a helpful error message
+    throw new Error(
+      'VS Code Language Model API integration is not yet fully implemented. ' +
+      'Please use an alternative provider like:\n' +
+      '- OpenAI (set OPENAI_API_KEY)\n' +
+      '- Anthropic (set ANTHROPIC_API_KEY)\n' +
+      '- Google Gemini (set GOOGLE_AI_API_KEY)\n' +
+      '- Ollama (local, set OLLAMA_HOST if not localhost:11434)'
+    );
   }
 
   async testConnection(): Promise<boolean> {

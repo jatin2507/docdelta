@@ -17,21 +17,63 @@
 
 ---
 
-## 🎯 Latest Release - v1.1.8
+## 🎯 Latest Release - v1.1.11
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Release%20Date-September%2024%2C%202025-blue?style=flat-square" alt="Release Date">
-  <img src="https://img.shields.io/badge/Type-Major%20Feature%20Update-orange?style=flat-square" alt="Release Type">
+  <img src="https://img.shields.io/badge/Release%20Date-September%2025%2C%202025-blue?style=flat-square" alt="Release Date">
+  <img src="https://img.shields.io/badge/Type-Critical%20Bug%20Fixes%20%26%20Features-red?style=flat-square" alt="Release Type">
   <img src="https://img.shields.io/badge/Stability-Production%20Ready-green?style=flat-square" alt="Stability">
 </div>
 
-### 🎉 What's New in v1.1.8
+### 🎉 What's New in v1.1.11
 
-#### 🔌 **VS Code Language Model API Integration**
-- **BREAKTHROUGH**: Direct integration with VS Code's Language Model API for seamless AI access
-- **NATIVE**: Use GitHub Copilot, Claude, GPT-4o directly from VS Code without API keys
-- **AUTOMATIC**: Auto-discovery of available VS Code language models
-- **FALLBACK**: Intelligent fallback to traditional API providers when VS Code is unavailable
+#### 🛡️ **Critical Bug Fixes & Stability Improvements**
+- **Fixed**: "chunks cannot be empty" validation error with graceful fallback content
+- **Resolved**: Mermaid CLI and Puppeteer dependency conflicts
+- **Fixed**: VSCode LM API key validation errors
+- **Resolved**: All TypeScript compilation errors
+- **Fixed**: Google Gemini provider API migration issues
+
+#### 🎯 **Interactive Diagram System**
+- **New**: Complete interactive HTML diagram generation system
+- **Enhanced**: Zoom, pan, and download functionality for all diagrams
+- **Added**: Mobile-responsive design with light/dark theme support
+- **Removed**: Problematic static image generation dependencies
+
+#### 🔧 **Improved Provider Management**
+- **Enhanced**: Better error messages for unavailable providers
+- **Fixed**: Configuration validation for all AI providers
+- **Updated**: Dependency management system
+- **Added**: Comprehensive fallback mechanisms
+
+---
+
+## 📈 Previous Releases
+
+### v1.1.10 - January 2025
+
+#### ⚡ **Automatic Dependency Management**
+- **Smart Provider Detection**: Automatically detects AI providers from configuration
+- **On-Demand Installation**: Installs missing dependencies globally without user interaction
+- **Cross-Platform Support**: Works seamlessly on Windows, macOS, and Linux
+- **Zero Configuration**: No manual dependency installation required
+
+#### 🔧 **Enhanced Provider System**
+- **Streamlined VS Code Integration**: Simplified VS Code Language Model API support
+- **Updated Provider Dependencies**: Latest SDK versions for all AI providers
+- **Optimized Bundle Size**: Conditional loading reduces package size significantly
+- **Google Gemini Update**: Migrated to new `@google/genai` SDK
+
+#### 🛠️ **Improved Configuration Management**
+- **Comprehensive Exclude Patterns**: All file exclusion patterns now use configuration
+- **Better Python Support**: Fixed virtual environment exclusion issues
+- **Dynamic Model Validation**: Latest model information from models.dev API
+- **Provider Status Checking**: New command to check dependency status
+
+#### 📦 **Package Optimizations**
+- **Size Reduction**: ~80% reduction in initial package size (450MB → 85MB)
+- **Peer Dependencies**: AI SDKs moved to peer dependencies for optional installation
+- **Latest Versions**: Updated to latest compatible versions
 - **EXTENSION**: Support for Continue, Codeium, TabNine, and other VS Code AI extensions
 
 #### 🎨 **Visual Diagram Generation - Images Not Text**
