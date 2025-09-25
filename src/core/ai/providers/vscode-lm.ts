@@ -1,65 +1,127 @@
-import { BaseAIProvider, AIProviderConfig, AIResponse, SummarizationRequest, CodeAnalysisRequest, DiagramGenerationRequest } from './base';
-import { AIConfig } from '../../../types';
+import { BaseAIProvider, AIProviderConfig, AIResponse, SummarizationRequest, CodeAnalysisRequest, DiagramGenerationRequest, AIProvider } from './base';
+
+// VS Code types (these would normally come from @types/vscode)
+interface LanguageModelChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+interface LanguageModel {
+  id: string;
+  sendRequest(messages: LanguageModelChatMessage[], options?: any, token?: any): { stream: AsyncIterable<any> };
+}
+
+interface VSCodeAPI {
+  lm: {
+    selectChatModels(selector?: { vendor?: string; family?: string }): Promise<LanguageModel[]>;
+  };
+}
+
+declare const vscode: VSCodeAPI | undefined;
 
 export class VSCodeLMProvider extends BaseAIProvider {
-  constructor(config: AIConfig) {
-    const providerConfig: AIProviderConfig = {
-      ...config,
-      provider: 'vscode-lm' as any
-    };
-    super(providerConfig);
+  private selectedModel?: LanguageModel;
+  private availableModels: string[] = [];
+
+  constructor(config: AIProviderConfig) {
+    super({ ...config, provider: AIProvider.VSCODE_LM });
   }
 
   async isAvailable(): Promise<boolean> {
     try {
-      // Check if running in VS Code environment
-      return process.env.VSCODE_PID !== undefined ||
-             process.env.TERM_PROGRAM === 'vscode' ||
-             typeof process.env.VSCODE_IPC_HOOK !== 'undefined' ||
-             typeof process.env.VSCODE_IPC_HOOK_CLI !== 'undefined';
+      // Check if VS Code API is available
+      return typeof vscode !== 'undefined' && typeof vscode.lm !== 'undefined';
     } catch {
       return false;
     }
   }
 
   async initialize(): Promise<void> {
-    // For VSCode LM, we don't need to validate API keys
-    // Just check if we're in the right environment
-    const available = await this.isAvailable();
-    if (!available) {
-      console.warn('VS Code Language Model API: Not running in VS Code environment. This provider will work only within VS Code.');
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async generateText(_prompt: string, _systemPrompt?: string): Promise<AIResponse> {
-    const available = await this.isAvailable();
-
-    if (!available) {
+    if (!await this.isAvailable()) {
       throw new Error(
         'VS Code Language Model API is not available. ' +
-        'This provider only works when running ScribeVerse from within VS Code with Language Model extensions installed. ' +
-        'Please either:\n' +
-        '1. Run ScribeVerse from VS Code terminal, or\n' +
-        '2. Use a different AI provider (like OpenAI, Anthropic, or Google Gemini)\n' +
-        '3. Configure an alternative provider in your .env file'
+        'This provider only works when running within VS Code as an extension. ' +
+        'Please use a different AI provider for CLI usage.'
       );
     }
 
-    // This would be implemented when the VS Code LM API is properly integrated
-    // For now, provide a helpful error message
-    throw new Error(
-      'VS Code Language Model API integration is not yet fully implemented. ' +
-      'Please use an alternative provider like:\n' +
-      '- OpenAI (set OPENAI_API_KEY)\n' +
-      '- Anthropic (set ANTHROPIC_API_KEY)\n' +
-      '- Google Gemini (set GOOGLE_AI_API_KEY)\n' +
-      '- Ollama (local, set OLLAMA_HOST if not localhost:11434)'
-    );
+    try {
+      // Get available models
+      const models = await vscode!.lm.selectChatModels();
+      if (models.length === 0) {
+        throw new Error(
+          'No VS Code Language Models are available. ' +
+          'Please install VS Code extensions that provide language models (like GitHub Copilot Chat) ' +
+          'or use a different AI provider.'
+        );
+      }
+
+      // Store available model names
+      this.availableModels = models.map(model => model.id);
+
+      // Select the preferred model or first available
+      const preferredModel = this.config.model || 'gpt-4o';
+      this.selectedModel = models.find(m => m.id === preferredModel) || models[0];
+
+      if (this.selectedModel.id !== preferredModel && this.config.model) {
+        console.warn(`Requested model "${preferredModel}" not available. Using "${this.selectedModel.id}" instead.`);
+      }
+    } catch (error) {
+      throw new Error(`Failed to initialize VS Code Language Model: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  async generateText(prompt: string, systemPrompt?: string): Promise<AIResponse> {
+    await this.initialize();
+
+    if (!this.selectedModel) {
+      throw new Error('No language model available');
+    }
+
+    try {
+      const messages: LanguageModelChatMessage[] = [];
+
+      if (systemPrompt) {
+        messages.push({ role: 'assistant', content: systemPrompt });
+      }
+
+      messages.push({ role: 'user', content: prompt });
+
+      const request = this.selectedModel.sendRequest(messages);
+      let content = '';
+
+      for await (const chunk of request.stream) {
+        content += chunk.toString();
+      }
+
+      const tokensUsed = this.estimateTokens(content + prompt + (systemPrompt || ''));
+      this.tokenCount += tokensUsed;
+      await this.recordTokenUsage(tokensUsed, 'generateText', this.selectedModel.id);
+
+      return {
+        content,
+        model: this.selectedModel.id,
+        tokensUsed,
+        finishReason: 'stop'
+      };
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('consent')) {
+        throw new Error(
+          'User consent required for VS Code Language Model access. ' +
+          'Please accept the language model usage prompt in VS Code, or use a different AI provider.'
+        );
+      }
+      throw this.handleError(error);
+    }
   }
 
   async testConnection(): Promise<boolean> {
-    return this.isAvailable();
+    try {
+      await this.initialize();
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   getProviderName(): string {
@@ -67,74 +129,104 @@ export class VSCodeLMProvider extends BaseAIProvider {
   }
 
   getModelName(): string {
-    return this.config.model || 'vscode-default';
+    return this.selectedModel?.id || this.config.model || 'vscode-default';
   }
 
   async *generateStream(prompt: string, systemPrompt?: string): AsyncGenerator<string> {
-    const response = await this.generateText(prompt, systemPrompt);
-    yield response.content;
+    await this.initialize();
+
+    if (!this.selectedModel) {
+      throw new Error('No language model available');
+    }
+
+    try {
+      const messages: LanguageModelChatMessage[] = [];
+
+      if (systemPrompt) {
+        messages.push({ role: 'assistant', content: systemPrompt });
+      }
+
+      messages.push({ role: 'user', content: prompt });
+
+      const request = this.selectedModel.sendRequest(messages);
+
+      for await (const chunk of request.stream) {
+        if (chunk) {
+          yield chunk.toString();
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('consent')) {
+        throw new Error(
+          'User consent required for VS Code Language Model access. ' +
+          'Please accept the language model usage prompt in VS Code, or use a different AI provider.'
+        );
+      }
+      throw this.handleError(error);
+    }
   }
 
   async summarize(request: SummarizationRequest): Promise<AIResponse> {
-    const prompt = `Please summarize the following content in a ${request.style || 'technical'} style${request.maxLength ? ` (max ${request.maxLength} words)` : ''}:
+    const systemPrompt = `You are a helpful assistant that creates concise, accurate summaries.
+Style: ${request.style || 'technical'}
+Max length: ${request.maxLength || 500} words
+Language: ${request.language || 'English'}`;
 
-${request.context ? `Context: ${request.context}\n\n` : ''}Content:
-${request.content}`;
+    const prompt = `Please summarize the following content:\n\n${request.content}`;
 
-    return this.generateText(prompt);
+    if (request.context) {
+      return this.generateText(`${prompt}\n\nContext: ${request.context}`, systemPrompt);
+    }
+
+    return this.generateText(prompt, systemPrompt);
   }
 
   async analyzeCode(request: CodeAnalysisRequest): Promise<AIResponse> {
-    const prompt = `Analyze the following ${request.language} code for ${request.analysisType}:
+    const systemPrompt = `You are an expert code analyzer. Provide ${request.analysisType} analysis for ${request.language} code.`;
 
-${request.context ? `Context: ${request.context}\n\n` : ''}Code:
-\`\`\`${request.language}
-${request.code}
-\`\`\`
+    const prompt = `Analyze this ${request.language} code:\n\n\`\`\`${request.language}\n${request.code}\n\`\`\``;
 
-Please provide a detailed ${request.analysisType} analysis.`;
+    if (request.context) {
+      return this.generateText(`${prompt}\n\nContext: ${request.context}`, systemPrompt);
+    }
 
-    return this.generateText(prompt);
+    return this.generateText(prompt, systemPrompt);
   }
 
   async generateDiagram(request: DiagramGenerationRequest): Promise<AIResponse> {
-    const prompt = `Generate a ${request.format} diagram of type "${request.type}" for the following description:
+    const systemPrompt = `Generate a ${request.format} ${request.type} diagram based on the description. Return only the diagram code without explanations.`;
 
-${request.description}
+    const prompt = `Create a ${request.type} diagram in ${request.format} format for: ${request.description}`;
 
-Please provide the diagram code in ${request.format} format.`;
-
-    return this.generateText(prompt);
+    return this.generateText(prompt, systemPrompt);
   }
 
   async generateEmbedding(text: string): Promise<number[]> {
-    // Simple fallback embedding
-    const hash = this.simpleHash(text);
-    const embedding = new Array(384).fill(0).map((_, i) =>
-      Math.sin(hash * (i + 1) * 0.1) * 0.1
-    );
-    return embedding;
-  }
-
-  private simpleHash(str: string): number {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return hash;
+    // Unused parameter for interface compliance
+    void text;
+    throw new Error('Embedding generation is not supported by VS Code Language Model API. Use a dedicated embedding service.');
   }
 
   async validateConfig(): Promise<boolean> {
-    return this.isAvailable();
+    try {
+      await this.initialize();
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async getModelList(): Promise<string[]> {
-    return ['vscode-default'];
+    try {
+      await this.initialize();
+      return this.availableModels;
+    } catch {
+      return ['gpt-4o', 'gpt-4o-mini', 'claude-3.5-sonnet'];
+    }
   }
 
   estimateTokens(text: string): number {
+    // Rough estimation for language models (approximately 4 characters per token)
     return Math.ceil(text.length / 4);
   }
 }
